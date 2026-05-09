@@ -188,68 +188,70 @@ ul, ol {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 70px;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
 
 .logo {
     font-family: var(--font-en);
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
-    color: var(--color-white);
+    color: var(--color-navy);
     letter-spacing: 1px;
 }
 
-.nav-list {
-    display: flex;
-    gap: 30px;
+.nav {
+    /* デスクトップ用 */
 }
 
-.nav-list a {
-    color: var(--color-navy);
-    font-family: var(--font-en);
-    font-weight: 600;
-    font-size: 0.9rem;
-    position: relative;
-    transition: var(--transition-fast);
-}
+@media (max-width: 768px) {
+    .nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        height: 100vh;
+        background: var(--color-bg-main);
+        transition: var(--transition-normal);
+        z-index: 999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+    }
 
-.nav-list a:hover {
-    color: var(--color-accent);
-}
+    .nav.active {
+        right: 0;
+    }
 
-.nav-list a::after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0%;
-    height: 2px;
-    background: var(--color-accent);
-    transition: var(--transition-normal);
-}
+    .nav-list {
+        flex-direction: column;
+        gap: 40px;
+        text-align: center;
+    }
 
-.nav-list a:hover::after {
-    width: 100%;
-}
+    .nav-list a {
+        font-size: 1.5rem;
+    }
 
-.menu-toggle {
-    display: none;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    width: 30px;
-    height: 20px;
-    position: relative;
-    z-index: 1001;
-}
-
-.menu-toggle span {
-    display: block;
-    width: 100%;
-    height: 2px;
-    background: var(--color-white);
-    position: absolute;
-    left: 0;
-    transition: var(--transition-normal);
+    .menu-toggle {
+        display: block !important;
+        margin-left: 10px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        z-index: 1001;
+    }
+    
+    .menu-toggle span {
+        background: var(--color-navy); /* ハンバーガーを紺色に */
+    }
 }
 
 .menu-toggle span:nth-child(1) { top: 0; }

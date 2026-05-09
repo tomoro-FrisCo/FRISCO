@@ -70,12 +70,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const authErrorMsg = document.getElementById('auth-error-msg');
     let isRegisterMode = false;
 
-    // モーダル開閉
+    // モーダル開閉（グローバルに公開してonclickから呼べるようにする）
+    window.openAuthModal = () => {
+        authModal.style.display = 'flex';
+    };
+
     navLoginBtn.addEventListener('click', () => {
         if (currentUser) {
             logoutUser();
         } else {
-            authModal.style.display = 'flex';
+            window.openAuthModal();
         }
     });
 
@@ -133,6 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
     observeAuthState((user) => {
         currentUser = user;
         const heroUserDisplay = document.getElementById('hero-user-display');
+        const wishFormContainer = document.getElementById('wish-form-container');
         
         if (user) {
             // ヘッダーに名前を大きく表示
@@ -144,13 +149,35 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             document.getElementById('nav-logout-btn').addEventListener('click', logoutUser);
             
+            // WISH LIST 投稿フォームを表示
+            if (wishFormContainer) {
+                wishFormContainer.innerHTML = `
+                    <div class="glass-panel" style="background: white; padding: 30px; border-radius: 15px; box-shadow: var(--shadow-sm);">
+                        <textarea id="wish-input" placeholder="例：BBQがしたい！、新しい練習メニューを試したい！など自由にどうぞ" style="width: 100%; height: 100px; padding: 15px; border: 1px solid rgba(27, 54, 93, 0.1); border-radius: 10px; margin-bottom: 15px; font-family: var(--font-ja); resize: none; font-size: 0.95rem;"></textarea>
+                        <div style="text-align: right;">
+                            <button id="wish-submit-btn" class="btn btn-primary" style="padding: 10px 30px; font-size: 0.9rem;">匿名で投稿する</button>
+                        </div>
+                    </div>
+                `;
+                setupWishSubmit();
+            }
+            
             // トップバナーにも名前を表示
             if (heroUserDisplay) {
                 heroUserDisplay.innerHTML = `🌟 ${user.displayName}さん、こんにちは！`;
             }
         } else {
-            navAuthItem.innerHTML = `<button id="nav-login-btn" class="btn" style="background: var(--color-navy); color: var(--color-white); padding: 8px 20px; font-size: 0.8rem;">LOGIN</button>`;
-            document.getElementById('nav-login-btn').addEventListener('click', () => authModal.style.display = 'flex');
+            navAuthItem.innerHTML = `<button id="nav-login-btn" class="btn" onclick="window.openAuthModal()" style="background: var(--color-navy); color: var(--color-white); padding: 8px 20px; font-size: 0.8rem;">LOGIN</button>`;
+            
+            // WISH LIST ログイン催促を表示
+            if (wishFormContainer) {
+                wishFormContainer.innerHTML = `
+                    <div class="glass-panel" style="background: rgba(27, 54, 93, 0.03); padding: 40px; border-radius: 15px; text-align: center; border: 1px dashed rgba(27, 54, 93, 0.2);">
+                        <p style="color: var(--color-navy); margin-bottom: 20px; font-weight: bold;">意見を投稿するにはログインが必要です</p>
+                        <button class="btn btn-primary" onclick="window.openAuthModal()">ログインして投稿する</button>
+                    </div>
+                `;
+            }
             
             if (heroUserDisplay) {
                 heroUserDisplay.innerHTML = '';
@@ -354,22 +381,26 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- 7. Wish List (意見箱) Logic ---
-    const wishInput = document.getElementById('wish-input');
-    const wishSubmitBtn = document.getElementById('wish-submit-btn');
-    const wishListContainer = document.getElementById('wish-list-container');
+    function setupWishSubmit() {
+        const wishInput = document.getElementById('wish-input');
+        const wishSubmitBtn = document.getElementById('wish-submit-btn');
+        if (!wishSubmitBtn) return;
 
-    if (wishSubmitBtn) {
         wishSubmitBtn.addEventListener('click', async () => {
             const content = wishInput.value.trim();
             if (!content) return;
+            if (!currentUser) {
+                alert("ログインが必要です");
+                window.openAuthModal();
+                return;
+            }
 
             wishSubmitBtn.disabled = true;
             wishSubmitBtn.textContent = '投稿中...';
 
-            const res = await addWish(content);
+            const res = await addWish(content, currentUser.uid);
             if (res.success) {
                 wishInput.value = '';
-                // 成功時は自動でリストが更新されます
             } else {
                 alert('投稿に失敗しました: ' + res.error);
             }
@@ -379,13 +410,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // 削除用グローバル関数
+    window.handleDeleteWish = async (wishId) => {
+        if (confirm("この投稿を削除しますか？")) {
+            const res = await deleteWish(wishId);
+            if (!res.success) alert("削除に失敗しました: " + res.error);
+        }
+    };
+
+    const wishListContainer = document.getElementById('wish-list-container');
     if (wishListContainer) {
         subscribeToWishes((wishes) => {
             wishListContainer.innerHTML = wishes.map(wish => {
                 const date = wish.timestamp ? new Date(wish.timestamp.seconds * 1000).toLocaleString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'なう';
+                const canDelete = currentUser && (wish.userId === currentUser.uid); 
+                const deleteBtn = canDelete ? `<button onclick="window.handleDeleteWish('${wish.id}')" style="background:none; border:none; color:#e53e3e; cursor:pointer; font-size:0.9rem; position:absolute; top:15px; right:15px; opacity:0.6;">🗑️</button>` : '';
+
                 return `
                     <div class="wish-card" style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid var(--color-accent); box-shadow: var(--shadow-sm); position: relative; animation: fadeIn 0.5s ease;">
-                        <p style="font-size: 1rem; color: var(--color-navy); margin-bottom: 10px; line-height: 1.5; white-space: pre-wrap;">${wish.content}</p>
+                        ${deleteBtn}
+                        <p style="font-size: 1rem; color: var(--color-navy); margin-bottom: 10px; line-height: 1.5; white-space: pre-wrap; padding-right: 30px;">${wish.content}</p>
                         <div style="font-size: 0.75rem; color: var(--color-text-muted); text-align: right; opacity: 0.7;">
                             📅 ${date}
                         </div>
