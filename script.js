@@ -227,6 +227,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- 5. Calendar Logic ---
+    const fixedEvents = {
+        "2026-05-13": "14時～16時 白金体育館",
+        "2026-05-21": "戸塚キャンパス練習",
+        "2026-05-27": "14時～16時 白金体育館",
+        "2026-06-27": "15時～17時 早稲田大学合同練習"
+    };
+
     function renderCalendar(date) {
         if (!calendarGrid) return;
         calendarGrid.innerHTML = '';
@@ -264,15 +271,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dayEl.innerHTML = `<span class="cal-day-num ${dayClass}">${d}</span>`;
             
-            // 練習日の判定（とりあえず以前の固定日設定などを反映させたい場合はここを調整）
-            // 今はDBにデータがある日を練習日として扱います
+            // 指定された予定があるか、またはDBにデータがある場合
+            const eventTitle = fixedEvents[dateStr];
             const dayData = currentAttendanceData[dateStr] || [];
-            if (dayData.length > 0 || [3, 7, 10, 14, 17, 21, 24, 28, 31].includes(d)) { // 例：特定の日にちを練習日に
+            
+            if (eventTitle || dayData.length > 0) {
                 dayEl.classList.add('has-events');
                 if (dayData.length > 0) {
                     dayEl.innerHTML += `<div class="attendance-badge">${dayData.map(() => '<div class="user-dot"></div>').join('')}</div>`;
                 }
-                dayEl.onclick = () => openAttendanceModal(dateStr, "練習 (17:00〜)");
+                const displayTitle = eventTitle || "練習 (17:00〜)";
+                dayEl.onclick = () => openAttendanceModal(dateStr, displayTitle);
             }
             calendarGrid.appendChild(dayEl);
         }
