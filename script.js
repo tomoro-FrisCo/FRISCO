@@ -279,12 +279,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h4 style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 20px; font-weight: 800; color: var(--color-navy);">SCHEDULE - ${monthYearDisplay.textContent}</h4>
                     <div class="monthly-event-list">
                         ${eventsInMonth.map(date => {
-                            const attendeesCount = (currentAttendanceData[date] || []).filter(a => a.status === 'going').length;
+                            const dayData = currentAttendanceData[date] || [];
+                            const attendees = dayData.filter(a => a.status === 'going');
+                            const namesStr = attendees.length > 0 
+                                ? attendees.map(a => a.userName).join(', ') 
+                                : '（まだ登録なし）';
+                            
                             return `
                                 <div class="monthly-event-item" onclick="window.openAttendanceModal('${date}', '${fixedEvents[date]}')">
                                     <div class="monthly-event-date">${date.replace(/-/g, '.')}</div>
                                     <div class="monthly-event-title">${fixedEvents[date]}</div>
-                                    <div style="font-size: 0.75rem; color: #3182ce; font-weight: bold; margin-top: 4px;">👤 ${attendeesCount}人参加</div>
+                                    <div style="font-size: 0.75rem; color: #3182ce; font-weight: bold; margin-top: 5px;">👤 ${attendees.length}人参加</div>
+                                    <div style="font-size: 0.7rem; color: var(--color-text-muted); line-height: 1.4; margin-top: 2px;">
+                                        <span style="opacity: 0.6;">参加者:</span> ${namesStr}
+                                    </div>
                                 </div>
                             `;
                         }).join('')}
