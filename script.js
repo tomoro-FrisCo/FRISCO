@@ -1,12 +1,35 @@
 import { registerUser, loginUser, logoutUser, observeAuthState } from "./auth.js";
 import { setAttendance, removeAttendance, subscribeToAttendance } from "./attendance.js";
-import { addWish, subscribeToWishes } from "./wishlist.js";
+import { addWish, subscribeToWishes, deleteWish } from "./wishlist.js";
+
+// --- Global Functions (確実にどこからでも呼べるように最上部で定義) ---
+window.openAuthModal = () => {
+    const modal = document.getElementById('auth-modal');
+    if (modal) {
+        modal.style.display = 'flex';
+        setTimeout(() => {
+            const emailInput = document.getElementById('auth-email');
+            if (emailInput) emailInput.focus();
+        }, 100);
+    }
+};
+
+window.handleDeleteWish = async (wishId) => {
+    if (!confirm("この投稿を削除しますか？")) return;
+    try {
+        const res = await deleteWish(wishId);
+        if (!res.success) alert("削除に失敗しました: " + res.error);
+    } catch (e) {
+        console.error("Delete error:", e);
+    }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Global State ---
     let currentUser = null;
     let currentAttendanceData = {};
     let unsubscribeAttendance = null;
+    let isRegisterMode = false;
 
     // --- 1. Header Scroll Effect ---
     const header = document.querySelector('.header');
@@ -61,58 +84,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 5. Firebase Auth UI Logic ---
     const authModal = document.getElementById('auth-modal');
     const authForm = document.getElementById('auth-form');
-    const navLoginBtn = document.getElementById('nav-login-btn');
     const navAuthItem = document.getElementById('nav-auth-item');
     const authSwitchLink = document.getElementById('auth-switch-link');
     const authModalTitle = document.getElementById('auth-modal-title');
     const registerFields = document.getElementById('register-only-fields');
     const authSubmitBtn = document.getElementById('auth-submit-btn');
     const authErrorMsg = document.getElementById('auth-error-msg');
-    let isRegisterMode = false;
-
-    // モーダル開閉（グローバルに公開）
-    window.openAuthModal = () => {
-        const modal = document.getElementById('auth-modal');
-        if (modal) {
-            modal.style.display = 'flex';
-            // フォーカスを最初の入力欄へ（ユーザビリティ向上）
-            setTimeout(() => {
-                const emailInput = document.getElementById('auth-email');
-                if (emailInput) emailInput.focus();
-            }, 100);
-        }
-    };
-
-    // 削除用グローバル関数（絶対確実に公開）
-    window.handleDeleteWish = async (wishId) => {
-        console.log("Delete triggered for:", wishId);
-        if (!confirm("この投稿を削除しますか？")) return;
-        
-        try {
-            const res = await deleteWish(wishId);
-            if (res.success) {
-                console.log("Delete success");
-            } else {
-                alert("削除に失敗しました: " + res.error);
-            }
-        } catch (e) {
-            console.error("Delete operation failed:", e);
-            alert("エラーが発生しました");
-        }
-    };
-
-    // ログインボタンの初期化
-    function initLoginButtons() {
-        document.querySelectorAll('#nav-login-btn').forEach(btn => {
-            btn.onclick = (e) => {
-                e.preventDefault();
-                window.openAuthModal();
-            };
-        });
-    }
-
-    // 初回実行
-    initLoginButtons();
+    const attendanceModal = document.getElementById('attendance-modal');
 
     document.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -121,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // モード切り替え
     authSwitchLink.addEventListener('click', (e) => {
         e.preventDefault();
         isRegisterMode = !isRegisterMode;
@@ -141,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
         authErrorMsg.style.display = 'none';
     });
 
-    // 送信処理
     authForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('auth-email').value;
