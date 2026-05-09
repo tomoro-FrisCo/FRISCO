@@ -1257,11 +1257,12 @@ ul, ol {
     height: 100%;
     background: rgba(0, 0, 0, 0.7);
     backdrop-filter: blur(5px);
-    z-index: 2000;
-    display: flex;
+    z-index: 10000 !important; /* 最前面へ */
+    display: none; /* JSでflexに切り替え */
     align-items: center;
     justify-content: center;
     padding: 20px;
+    pointer-events: auto;
 }
 
 .modal-content {
@@ -1269,6 +1270,11 @@ ul, ol {
     max-width: 450px;
     position: relative;
     padding: 40px;
+    background: white; /* 背景色を明示 */
+    border-radius: 20px;
+    z-index: 10001 !important;
+    pointer-events: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

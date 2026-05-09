@@ -70,26 +70,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const authErrorMsg = document.getElementById('auth-error-msg');
     let isRegisterMode = false;
 
-    // モーダル開閉（グローバルに公開してonclickから呼べるようにする）
+    // モーダル開閉（グローバルに公開）
     window.openAuthModal = () => {
         const modal = document.getElementById('auth-modal');
-        if (modal) modal.style.display = 'flex';
+        if (modal) {
+            modal.style.display = 'flex';
+            // フォーカスを最初の入力欄へ（ユーザビリティ向上）
+            setTimeout(() => {
+                const emailInput = document.getElementById('auth-email');
+                if (emailInput) emailInput.focus();
+            }, 100);
+        }
     };
 
-    // 削除用グローバル関数
+    // 削除用グローバル関数（絶対確実に公開）
     window.handleDeleteWish = async (wishId) => {
+        console.log("Delete triggered for:", wishId);
         if (!confirm("この投稿を削除しますか？")) return;
         
         try {
             const res = await deleteWish(wishId);
             if (res.success) {
-                console.log("Deleted successfully");
+                console.log("Delete success");
             } else {
                 alert("削除に失敗しました: " + res.error);
             }
         } catch (e) {
-            console.error("Delete error:", e);
-            alert("削除中にエラーが発生しました");
+            console.error("Delete operation failed:", e);
+            alert("エラーが発生しました");
         }
     };
 
