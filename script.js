@@ -135,6 +135,14 @@ document.addEventListener('DOMContentLoaded', () => {
             authSubmitBtn.disabled = true;
             authSubmitBtn.textContent = '処理中...';
 
+            if (isRegisterMode && !displayName) {
+                authErrorMsg.textContent = "名前を入力してください";
+                authErrorMsg.style.display = 'block';
+                authSubmitBtn.disabled = false;
+                authSubmitBtn.textContent = '登録してログイン';
+                return;
+            }
+
             const result = isRegisterMode 
                 ? await registerUser(email, password, displayName)
                 : await loginUser(email, password);
@@ -228,6 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 5. Calendar Logic ---
     const fixedEvents = {
+        "2025-05-13": "14時～16時 白金体育館",
+        "2025-05-21": "戸塚キャンパス練習",
+        "2025-05-27": "14時～16時 白金体育館",
+        "2025-06-27": "15時～17時 早稲田大学合同練習",
         "2026-05-13": "14時～16時 白金体育館",
         "2026-05-21": "戸塚キャンパス練習",
         "2026-05-27": "14時～16時 白金体育館",
@@ -266,15 +278,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 detailPanel.innerHTML = `
                     <h4 style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 20px; font-weight: 800; color: var(--color-navy);">SCHEDULE - ${monthYearDisplay.textContent}</h4>
                     <div class="monthly-event-list">
-                        ${eventsInMonth.map(date => `
-                            <div class="monthly-event-item" onclick="window.openAttendanceModal('${date}', '${fixedEvents[date]}')">
-                                <div class="monthly-event-date">${date.replace(/-/g, '.')}</div>
-                                <div class="monthly-event-title">${fixedEvents[date]}</div>
-                            </div>
-                        `).join('')}
+                        ${eventsInMonth.map(date => {
+                            const attendeesCount = (currentAttendanceData[date] || []).filter(a => a.status === 'going').length;
+                            return `
+                                <div class="monthly-event-item" onclick="window.openAttendanceModal('${date}', '${fixedEvents[date]}')">
+                                    <div class="monthly-event-date">${date.replace(/-/g, '.')}</div>
+                                    <div class="monthly-event-title">${fixedEvents[date]}</div>
+                                    <div style="font-size: 0.75rem; color: #3182ce; font-weight: bold; margin-top: 4px;">👤 ${attendeesCount}人参加</div>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 `;
             } else {
+                // ... (今月の予定はありません)
                 detailPanel.innerHTML = `
                     <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--color-text-muted); opacity: 0.5; padding: 40px 0;">
                         <span style="font-size: 2rem; margin-bottom: 10px;">📅</span>
