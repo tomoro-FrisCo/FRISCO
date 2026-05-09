@@ -89,9 +89,19 @@ document.addEventListener('DOMContentLoaded', () => {
     authSwitchLink.addEventListener('click', (e) => {
         e.preventDefault();
         isRegisterMode = !isRegisterMode;
-        authModalTitle.textContent = isRegisterMode ? 'REGISTER' : 'LOGIN';
-        registerFields.style.display = isRegisterMode ? 'block' : 'none';
-        authSubmitBtn.textContent = isRegisterMode ? '新規登録' : 'ログイン';
+        
+        if (isRegisterMode) {
+            authModalTitle.textContent = '新規アカウント作成';
+            registerFields.style.display = 'block';
+            authSubmitBtn.textContent = '登録してログイン';
+            authSwitchLink.textContent = 'すでにアカウントをお持ちの方（ログインへ）';
+        } else {
+            authModalTitle.textContent = 'LOGIN';
+            registerFields.style.display = 'none';
+            authSubmitBtn.textContent = 'ログイン';
+            authSwitchLink.textContent = 'アカウントをお持ちでない方（新規登録）';
+        }
+        
         authErrorMsg.style.display = 'none';
     });
 

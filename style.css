@@ -168,16 +168,17 @@ ul, ol {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 9999; /* 確実に最前面へ */
     transition: var(--transition-normal);
-    padding: 20px 0;
+    padding: 15px 0;
+    background: rgba(242, 238, 227, 0.98); /* 透過を抑えて視認性向上 */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .header.scrolled {
-    background: rgba(242, 238, 227, 0.95);
-    backdrop-filter: blur(10px);
-    padding: 15px 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background: rgba(242, 238, 227, 1);
+    padding: 12px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .header-inner {
