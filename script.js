@@ -140,11 +140,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const wishFormContainer = document.getElementById('wish-form-container');
         
         if (user) {
-            // ヘッダーに名前を大きく表示
+            // ヘッダーの認証エリアを更新
             navAuthItem.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 15px; background: rgba(27, 54, 93, 0.05); padding: 5px 15px; border-radius: 50px;">
-                    <span style="font-size: 0.9rem; font-weight: 800; color: var(--color-navy);">👤 ${user.displayName || 'Member'}</span>
-                    <button id="nav-logout-btn" class="btn" style="background: var(--color-navy); color: var(--color-white); padding: 5px 12px; font-size: 0.65rem; border-radius: 20px;">LOGOUT</button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--color-navy); white-space: nowrap;">👤 ${user.displayName || 'Member'}</span>
+                    <button id="nav-logout-btn" class="btn" style="background: var(--color-navy); color: var(--color-white); padding: 5px 10px; font-size: 0.6rem; border-radius: 20px;">LOGOUT</button>
                 </div>
             `;
             document.getElementById('nav-logout-btn').addEventListener('click', logoutUser);

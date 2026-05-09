@@ -16,18 +16,23 @@
     <header class="header">
         <div class="header-inner">
             <a href="#top" class="logo" style="color: var(--color-navy) !important;">FrisCo</a>
-            <button class="menu-toggle" aria-label="メニューを開く">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
+            
+            <div class="header-right">
+                <div id="nav-auth-item" style="display: flex; align-items: center;">
+                    <button id="nav-login-btn" class="btn" onclick="window.openAuthModal()" style="background: var(--color-navy); color: var(--color-white); padding: 8px 15px; font-size: 0.75rem;">LOGIN</button>
+                </div>
+                
+                <button class="menu-toggle" aria-label="メニューを開く">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
             <nav class="nav">
                 <ul class="nav-list">
                     <li><a href="#top">TOP</a></li>
                     <li><a href="about.html">ABOUT US</a></li>
-                    <li id="nav-auth-item">
-                        <button id="nav-login-btn" class="btn" style="background: var(--color-navy); color: var(--color-white); padding: 8px 20px; font-size: 0.8rem;">LOGIN</button>
-                    </li>
                 </ul>
             </nav>
         </div>
