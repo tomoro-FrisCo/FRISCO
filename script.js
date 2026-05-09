@@ -1,5 +1,6 @@
 import { registerUser, loginUser, logoutUser, observeAuthState } from "./auth.js";
 import { setAttendance, removeAttendance, subscribeToAttendance } from "./attendance.js";
+import { addWish, subscribeToWishes } from "./wishlist.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Global State ---
@@ -351,6 +352,48 @@ document.addEventListener('DOMContentLoaded', () => {
         const res = await removeAttendance(currentUser.uid, date);
         if (res.success) updateAttendanceModalUI(date);
     });
+
+    // --- 7. Wish List (意見箱) Logic ---
+    const wishInput = document.getElementById('wish-input');
+    const wishSubmitBtn = document.getElementById('wish-submit-btn');
+    const wishListContainer = document.getElementById('wish-list-container');
+
+    if (wishSubmitBtn) {
+        wishSubmitBtn.addEventListener('click', async () => {
+            const content = wishInput.value.trim();
+            if (!content) return;
+
+            wishSubmitBtn.disabled = true;
+            wishSubmitBtn.textContent = '投稿中...';
+
+            const res = await addWish(content);
+            if (res.success) {
+                wishInput.value = '';
+                // 成功時は自動でリストが更新されます
+            } else {
+                alert('投稿に失敗しました: ' + res.error);
+            }
+
+            wishSubmitBtn.disabled = false;
+            wishSubmitBtn.textContent = '匿名で投稿する';
+        });
+    }
+
+    if (wishListContainer) {
+        subscribeToWishes((wishes) => {
+            wishListContainer.innerHTML = wishes.map(wish => {
+                const date = wish.timestamp ? new Date(wish.timestamp.seconds * 1000).toLocaleString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'なう';
+                return `
+                    <div class="wish-card" style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid var(--color-accent); box-shadow: var(--shadow-sm); position: relative; animation: fadeIn 0.5s ease;">
+                        <p style="font-size: 1rem; color: var(--color-navy); margin-bottom: 10px; line-height: 1.5; white-space: pre-wrap;">${wish.content}</p>
+                        <div style="font-size: 0.75rem; color: var(--color-text-muted); text-align: right; opacity: 0.7;">
+                            📅 ${date}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        });
+    }
 
     renderCalendar(currentDate);
     prevMonthBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(currentDate); });

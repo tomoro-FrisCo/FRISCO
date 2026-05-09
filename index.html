@@ -115,7 +115,30 @@
             </div>
         </section>
 
+        <!-- WISH LIST (意見箱) -->
+        <section id="wishlist" class="section bg-light">
+            <div class="container" style="max-width: 800px;">
+                <div class="section-header fade-in">
+                    <h2 class="section-title">WISH LIST</h2>
+                    <p class="section-subtitle">みんなの「やりたい！」を匿名で投稿</p>
+                </div>
 
+                <!-- 投稿フォーム -->
+                <div class="wish-form-wrapper fade-in-up" style="margin-bottom: 50px;">
+                    <div class="glass-panel" style="background: white; padding: 30px; border-radius: 15px; box-shadow: var(--shadow-sm);">
+                        <textarea id="wish-input" placeholder="例：BBQがしたい！、新しい練習メニューを試したい！など自由にどうぞ（匿名で投稿されます）" style="width: 100%; height: 100px; padding: 15px; border: 1px solid rgba(27, 54, 93, 0.1); border-radius: 10px; margin-bottom: 15px; font-family: var(--font-ja); resize: none; font-size: 0.95rem;"></textarea>
+                        <div style="text-align: right;">
+                            <button id="wish-submit-btn" class="btn btn-primary" style="padding: 10px 30px; font-size: 0.9rem;">匿名で投稿する</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 意見一覧表示エリア -->
+                <div id="wish-list-container" class="fade-in-up" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
+                    <!-- 投稿内容がここにカード形式で入ります -->
+                </div>
+            </div>
+        </section>
 
         <!-- ⑦ CONTACT / SNS -->
         <section id="contact" class="section contact-section bg-navy">
