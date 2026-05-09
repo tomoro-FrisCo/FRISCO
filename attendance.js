@@ -2,7 +2,6 @@ import {
     collection, 
     doc, 
     setDoc, 
-    getDocs, 
     query, 
     where, 
     deleteDoc,
@@ -10,13 +9,6 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 import { db } from "./firebase-config.js";
 
-/**
- * 出欠登録（保存）
- * @param {string} userId - ユーザーID
- * @param {string} userName - 表示名
- * @param {string} date - 日付 (YYYY-MM-DD)
- * @param {string} status - 出欠 ('going' or 'absent')
- */
 export async function setAttendance(userId, userName, date, status) {
     try {
         const attendanceId = `${userId}_${date}`;
@@ -34,9 +26,6 @@ export async function setAttendance(userId, userName, date, status) {
     }
 }
 
-/**
- * 出欠取消
- */
 export async function removeAttendance(userId, date) {
     try {
         const attendanceId = `${userId}_${date}`;
@@ -48,11 +37,7 @@ export async function removeAttendance(userId, date) {
     }
 }
 
-/**
- * 特定の月の出欠データをリアルタイム取得
- */
 export function subscribeToAttendance(monthStr, callback) {
-    // monthStr: "2026-05"
     const q = query(collection(db, "attendance"), 
               where("date", ">=", `${monthStr}-01`),
               where("date", "<=", `${monthStr}-31`));

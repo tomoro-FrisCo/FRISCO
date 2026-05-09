@@ -7,12 +7,10 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 import { auth } from "./firebase-config.js";
 
-// --- 会員登録 ---
 export async function registerUser(email, password, displayName) {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        // プロフィールに表示名を設定
         await updateProfile(user, { displayName: displayName });
         return { success: true, user: user };
     } catch (error) {
@@ -21,7 +19,6 @@ export async function registerUser(email, password, displayName) {
     }
 }
 
-// --- ログイン ---
 export async function loginUser(email, password) {
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -32,7 +29,6 @@ export async function loginUser(email, password) {
     }
 }
 
-// --- ログアウト ---
 export async function logoutUser() {
     try {
         await signOut(auth);
@@ -43,7 +39,6 @@ export async function logoutUser() {
     }
 }
 
-// --- ログイン状態の監視 ---
 export function observeAuthState(callback) {
     onAuthStateChanged(auth, (user) => {
         callback(user);

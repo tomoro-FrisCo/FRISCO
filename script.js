@@ -71,6 +71,34 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // --- 1.5 Appearance (Fade-in logic) ---
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) entry.target.classList.add('visible');
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.fade-in, .fade-in-up, .fade-in-left, .fade-in-right').forEach(el => observer.observe(el));
+
+    // Smooth Scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.onclick = (e) => {
+            e.preventDefault();
+            const targetId = anchor.getAttribute('href');
+            if (targetId === '#') return;
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                if (menuToggle) {
+                    menuToggle.classList.remove('active');
+                    nav.classList.remove('active');
+                }
+                window.scrollTo({
+                    top: targetElement.offsetTop - 70,
+                    behavior: 'smooth'
+                });
+            }
+        };
+    });
+
     // --- 2. Modals Control ---
     document.querySelectorAll('.modal-close').forEach(btn => {
         btn.onclick = () => {
