@@ -1237,16 +1237,62 @@ ul, ol {
     box-shadow: var(--shadow-md);
 }
 
-.active-going {
-    background: #3182ce !important;
-    color: white !important;
-    border-color: #3182ce !important;
-}
-
 .active-absent {
     background: #e53e3e !important;
     color: white !important;
     border-color: #e53e3e !important;
+}
+
+/* 予定がある日の赤い丸 */
+.cal-day.has-events .cal-day-num {
+    background: #e53e3e;
+    color: white !important;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.calendar-detail-panel {
+    background: var(--color-bg-main);
+    padding: 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(27, 54, 93, 0.1);
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.monthly-event-item {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(27, 54, 93, 0.1);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.monthly-event-item:last-child {
+    border-bottom: none;
+}
+
+.monthly-event-item:hover {
+    padding-left: 5px;
+    color: var(--color-accent);
+}
+
+.monthly-event-date {
+    font-size: 0.75rem;
+    font-family: var(--font-en);
+    font-weight: 800;
+    color: #e53e3e;
+    margin-bottom: 2px;
+}
+
+.monthly-event-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--color-navy);
 }
 /* --- Modals --- */
 .modal-overlay {

@@ -254,7 +254,37 @@ document.addEventListener('DOMContentLoaded', () => {
         calendarGrid.innerHTML = '';
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
+        const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
 
+        // 詳細パネルを今月の予定リストに書き換え
+        const eventsInMonth = Object.keys(fixedEvents)
+            .filter(date => date.startsWith(monthStr))
+            .sort();
+
+        if (detailPanel) {
+            if (eventsInMonth.length > 0) {
+                detailPanel.innerHTML = `
+                    <h4 style="font-size: 0.8rem; opacity: 0.6; margin-bottom: 20px; font-weight: 800; color: var(--color-navy);">SCHEDULE - ${monthYearDisplay.textContent}</h4>
+                    <div class="monthly-event-list">
+                        ${eventsInMonth.map(date => `
+                            <div class="monthly-event-item" onclick="window.openAttendanceModal('${date}', '${fixedEvents[date]}')">
+                                <div class="monthly-event-date">${date.replace(/-/g, '.')}</div>
+                                <div class="monthly-event-title">${fixedEvents[date]}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                detailPanel.innerHTML = `
+                    <div style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--color-text-muted); opacity: 0.5; padding: 40px 0;">
+                        <span style="font-size: 2rem; margin-bottom: 10px;">📅</span>
+                        今月の予定はありません
+                    </div>
+                `;
+            }
+        }
+
+        // カレンダーグリッドの描画
         for (let i = 0; i < firstDay; i++) {
             calendarGrid.appendChild(document.createElement('div'));
         }
@@ -271,23 +301,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dayEl.innerHTML = `<span class="cal-day-num ${dayClass}">${d}</span>`;
             
-            // 指定された予定があるか、またはDBにデータがある場合
             const eventTitle = fixedEvents[dateStr];
             const dayData = currentAttendanceData[dateStr] || [];
             
-            if (eventTitle || dayData.length > 0) {
+            if (eventTitle) {
                 dayEl.classList.add('has-events');
-                if (dayData.length > 0) {
-                    dayEl.innerHTML += `<div class="attendance-badge">${dayData.map(() => '<div class="user-dot"></div>').join('')}</div>`;
-                }
-                const displayTitle = eventTitle || "練習 (17:00〜)";
-                dayEl.onclick = () => openAttendanceModal(dateStr, displayTitle);
+                dayEl.onclick = () => window.openAttendanceModal(dateStr, eventTitle);
+            } else if (dayData.length > 0) {
+                // DBにだけデータがある場合も一応表示
+                dayEl.classList.add('has-events');
+                dayEl.onclick = () => window.openAttendanceModal(dateStr, "練習 (17:00〜)");
             }
+            
             calendarGrid.appendChild(dayEl);
         }
     }
 
-    function openAttendanceModal(date, title) {
+    // グローバルに関数を公開（onclickから呼べるように）
+    window.openAttendanceModal = (date, title) => {
         if (!currentUser) {
             alert("出欠登録にはログインが必要です");
             window.openAuthModal();
@@ -299,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('att-modal-event').textContent = title;
         updateAttendanceModalUI(date);
         modal.style.display = 'flex';
-    }
+    };
 
     function updateAttendanceModalUI(date) {
         const attendanceList = currentAttendanceData[date] || [];
