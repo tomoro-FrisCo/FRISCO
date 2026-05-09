@@ -72,21 +72,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // モーダル開閉（グローバルに公開してonclickから呼べるようにする）
     window.openAuthModal = () => {
-        authModal.style.display = 'flex';
+        const modal = document.getElementById('auth-modal');
+        if (modal) modal.style.display = 'flex';
     };
 
-    navLoginBtn.addEventListener('click', () => {
-        if (currentUser) {
-            logoutUser();
-        } else {
-            window.openAuthModal();
+    // 削除用グローバル関数
+    window.handleDeleteWish = async (wishId) => {
+        if (!confirm("この投稿を削除しますか？")) return;
+        
+        try {
+            const res = await deleteWish(wishId);
+            if (res.success) {
+                console.log("Deleted successfully");
+            } else {
+                alert("削除に失敗しました: " + res.error);
+            }
+        } catch (e) {
+            console.error("Delete error:", e);
+            alert("削除中にエラーが発生しました");
         }
-    });
+    };
+
+    // ログインボタンの初期化
+    function initLoginButtons() {
+        document.querySelectorAll('#nav-login-btn').forEach(btn => {
+            btn.onclick = (e) => {
+                e.preventDefault();
+                window.openAuthModal();
+            };
+        });
+    }
+
+    // 初回実行
+    initLoginButtons();
 
     document.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', () => {
             authModal.style.display = 'none';
-            attendanceModal.style.display = 'none';
+            if (attendanceModal) attendanceModal.style.display = 'none';
         });
     });
 
@@ -409,14 +432,6 @@ document.addEventListener('DOMContentLoaded', () => {
             wishSubmitBtn.textContent = '匿名で投稿する';
         });
     }
-
-    // 削除用グローバル関数
-    window.handleDeleteWish = async (wishId) => {
-        if (confirm("この投稿を削除しますか？")) {
-            const res = await deleteWish(wishId);
-            if (!res.success) alert("削除に失敗しました: " + res.error);
-        }
-    };
 
     const wishListContainer = document.getElementById('wish-list-container');
     if (wishListContainer) {
