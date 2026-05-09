@@ -232,8 +232,19 @@ document.addEventListener('DOMContentLoaded', () => {
         calendarGrid.innerHTML = '';
         const year = date.getFullYear();
         const month = date.getMonth();
+        const monthStr = `${year}-${String(month + 1).padStart(2, '0')}`;
         monthYearDisplay.textContent = `${year}.${String(month + 1).padStart(2, '0')}`;
 
+        // 出欠データの購読
+        if (unsubscribeAttendance) unsubscribeAttendance();
+        unsubscribeAttendance = subscribeToAttendance(monthStr, (data) => {
+            currentAttendanceData = data;
+            drawCalendarGrid(year, month);
+        });
+    }
+
+    function drawCalendarGrid(year, month) {
+        calendarGrid.innerHTML = '';
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
 
@@ -246,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
             dayEl.className = 'cal-day';
             const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
             
-            // 土日の色付け
             const dayOfWeek = new Date(year, month, d).getDay();
             let dayClass = '';
             if (dayOfWeek === 0) dayClass = 'sunday';
@@ -254,22 +264,77 @@ document.addEventListener('DOMContentLoaded', () => {
 
             dayEl.innerHTML = `<span class="cal-day-num ${dayClass}">${d}</span>`;
             
-            // 練習日の仮データ（実際はDBから取得可能ですが、一旦UIのみ）
-            if (d % 4 === 0) {
+            // 練習日の判定（とりあえず以前の固定日設定などを反映させたい場合はここを調整）
+            // 今はDBにデータがある日を練習日として扱います
+            const dayData = currentAttendanceData[dateStr] || [];
+            if (dayData.length > 0 || [3, 7, 10, 14, 17, 21, 24, 28, 31].includes(d)) { // 例：特定の日にちを練習日に
                 dayEl.classList.add('has-events');
-                dayEl.innerHTML += `<div class="attendance-badge"><div class="user-dot"></div></div>`;
-                dayEl.onclick = () => showDetail(dateStr, "通常練習 (17:00〜)");
+                if (dayData.length > 0) {
+                    dayEl.innerHTML += `<div class="attendance-badge">${dayData.map(() => '<div class="user-dot"></div>').join('')}</div>`;
+                }
+                dayEl.onclick = () => openAttendanceModal(dateStr, "練習 (17:00〜)");
             }
             calendarGrid.appendChild(dayEl);
         }
     }
 
-    function showDetail(date, title) {
-        detailEmptyMsg.style.display = 'none';
-        detailContent.style.display = 'block';
-        document.getElementById('detail-date').textContent = date;
-        document.getElementById('detail-event-title').textContent = title;
+    function openAttendanceModal(date, title) {
+        if (!currentUser) {
+            alert("出欠登録にはログインが必要です");
+            window.openAuthModal();
+            return;
+        }
+        const modal = document.getElementById('attendance-modal');
+        modal.dataset.currentDate = date;
+        document.getElementById('att-modal-date').textContent = date;
+        document.getElementById('att-modal-event').textContent = title;
+        updateAttendanceModalUI(date);
+        modal.style.display = 'flex';
     }
+
+    function updateAttendanceModalUI(date) {
+        const attendanceList = currentAttendanceData[date] || [];
+        const myAttendance = attendanceList.find(a => a.userId === currentUser.uid);
+        const membersList = document.getElementById('att-members-list');
+        const removeBtn = document.getElementById('att-remove-btn');
+        const choiceBtns = document.querySelectorAll('.att-choice-btn');
+
+        // ボタンの状態リセット
+        choiceBtns.forEach(btn => {
+            btn.classList.remove('active-going', 'active-absent');
+            btn.style.background = 'transparent';
+            btn.style.color = btn.dataset.status === 'going' ? '#3182ce' : '#e53e3e';
+        });
+
+        if (myAttendance) {
+            const activeClass = myAttendance.status === 'going' ? 'active-going' : 'active-absent';
+            const activeBtn = document.querySelector(`.att-choice-btn[data-status="${myAttendance.status}"]`);
+            if (activeBtn) activeBtn.classList.add(activeClass);
+            removeBtn.style.display = 'block';
+        } else {
+            removeBtn.style.display = 'none';
+        }
+
+        // 参加者一覧
+        const attendees = attendanceList.filter(a => a.status === 'going');
+        membersList.innerHTML = attendees.length > 0 
+            ? attendees.map(a => `<li>${a.userName}</li>`).join('')
+            : '<li style="list-style:none; opacity:0.5;">まだ誰も登録していません</li>';
+    }
+
+    // 出欠ボタンイベント
+    document.querySelectorAll('.att-choice-btn').forEach(btn => {
+        btn.onclick = async () => {
+            const status = btn.dataset.status;
+            const date = document.getElementById('attendance-modal').dataset.currentDate;
+            await setAttendance(currentUser.uid, currentUser.displayName, date, status);
+        };
+    });
+
+    document.getElementById('att-remove-btn').onclick = async () => {
+        const date = document.getElementById('attendance-modal').dataset.currentDate;
+        await removeAttendance(currentUser.uid, date);
+    };
 
     if (prevMonthBtn) prevMonthBtn.onclick = () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(currentDate); };
     if (nextMonthBtn) nextMonthBtn.onclick = () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(currentDate); };
