@@ -209,6 +209,34 @@ ul, ol {
     /* デスクトップ用 */
 }
 
+/* Hero Buttons Responsive */
+@media (max-width: 768px) {
+    .hero-content {
+        padding-top: 40px !important;
+    }
+    .hero-content div[style*="display: flex"] {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 10px !important;
+    }
+    .hero-content .btn-large {
+        width: 100% !important;
+        max-width: 260px !important;
+        padding: 12px 15px !important;
+        font-size: 0.8rem !important;
+    }
+}
+
+/* Hamburger Menu lines */
+.menu-toggle span {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background: var(--color-navy);
+    margin: 5px auto;
+    transition: var(--transition-normal);
+}
+
 @media (max-width: 768px) {
     .nav {
         position: fixed;
