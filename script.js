@@ -197,6 +197,18 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     }
 
+    window.editEvent = (date, title) => {
+        const dIn = document.getElementById('admin-event-date');
+        const tIn = document.getElementById('admin-event-title');
+        if (dIn && tIn) {
+            dIn.value = date;
+            tIn.value = title;
+            tIn.focus();
+            // フォームまでスクロール
+            dIn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
+
     function drawCalendar() {
         calendarGrid.innerHTML = '';
         const year = currentDate.getFullYear();
@@ -209,26 +221,63 @@ document.addEventListener('DOMContentLoaded', () => {
         if (detailPanel) {
             const eventsInMonth = Object.keys(dynamicEvents).filter(d => d.startsWith(monthStr)).sort();
             let adminForm = isAdmin ? `
-                <div style="background:white; padding:15px; border-radius:10px; margin-bottom:20px; border:2px solid var(--color-accent);">
-                    <p style="font-size:0.7rem; font-weight:800; margin-bottom:10px;">【管理者】予定追加</p>
-                    <input type="date" id="admin-event-date" style="width:100%; margin-bottom:5px;">
-                    <input type="text" id="admin-event-title" placeholder="予定名" style="width:100%; margin-bottom:10px;">
-                    <button onclick="window.handleAddEvent()" class="btn btn-primary" style="width:100%;">追加</button>
+                <div id="admin-panel" style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 25px; border: 2px solid var(--color-accent); box-shadow: var(--shadow-md);">
+                    <p style="font-size: 0.8rem; font-weight: 800; margin-bottom: 15px; color: var(--color-navy); display: flex; align-items: center; gap: 5px;">
+                        <span style="font-size: 1.2rem;">📅</span> 予定の追加・編集
+                    </p>
+                    <div style="display: flex; flex-direction: column; gap: 10px;">
+                        <input type="date" id="admin-event-date" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;">
+                        <input type="text" id="admin-event-title" placeholder="例：13:35～15:35 白金体育館" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit;">
+                        <button onclick="window.handleAddEvent()" class="btn btn-primary" style="width: 100%; padding: 10px; font-weight: 800; letter-spacing: 1px;">保存する</button>
+                    </div>
+                    <p style="font-size: 0.6rem; color: #888; margin-top: 10px;">※同じ日付で保存すると上書き（編集）されます</p>
                 </div>
             ` : '';
-            detailPanel.innerHTML = adminForm + (eventsInMonth.length > 0 ? `<div class="monthly-event-list">${eventsInMonth.map(d => {
-                const count = (currentAttendanceData[d] || []).filter(a => a.status === 'going').length;
-                const delBtn = isAdmin ? `<button onclick="window.handleDeleteEvent('${d}')" style="color:#e53e3e; border:none; background:none; cursor:pointer;">🗑️</button>` : '';
-                return `<div class="monthly-event-item" onclick="window.openAttendanceModal('${d}', '${dynamicEvents[d]}')"><div style="display:flex; justify-content:space-between;"><span>${d} ${dynamicEvents[d]}</span>${delBtn}</div><div style="font-size:0.7rem; color:#3182ce;">👤 ${count}人参加</div></div>`;
-            }).join('')}</div>` : '<p style="text-align:center; opacity:0.5;">予定なし</p>');
+
+            detailPanel.innerHTML = adminForm + (eventsInMonth.length > 0 ? `
+                <h4 style="font-size:0.7rem; opacity:0.6; margin-bottom:15px; letter-spacing: 2px;">SCHEDULE LIST</h4>
+                <div class="monthly-event-list">
+                    ${eventsInMonth.map(d => {
+                        const count = (currentAttendanceData[d] || []).filter(a => a.status === 'going').length;
+                        const eventTitle = dynamicEvents[d];
+                        let adminControls = isAdmin ? `
+                            <div style="display: flex; gap: 10px;">
+                                <button onclick="window.editEvent('${d}', '${eventTitle}')" style="background:none; border:none; cursor:pointer; font-size:1rem; filter: grayscale(1);" title="編集">✏️</button>
+                                <button onclick="window.handleDeleteEvent('${d}')" style="background:none; border:none; cursor:pointer; font-size:1rem; filter: grayscale(1);" title="削除">🗑️</button>
+                            </div>
+                        ` : '';
+                        
+                        return `
+                            <div class="monthly-event-item" style="background: white; border-radius: 10px; padding: 15px; margin-bottom: 12px; border: 1px solid rgba(0,0,0,0.05); transition: all 0.2s ease;">
+                                <div style="display:flex; justify-content:space-between; align-items: flex-start;">
+                                    <div onclick="window.openAttendanceModal('${d}', '${eventTitle}')" style="cursor: pointer; flex: 1;">
+                                        <div class="monthly-event-date" style="color: var(--color-accent); font-weight: 800; font-size: 0.7rem; margin-bottom: 3px;">${d}</div>
+                                        <div class="monthly-event-title" style="font-weight: 700; color: var(--color-navy); font-size: 0.9rem;">${eventTitle}</div>
+                                        <div style="font-size:0.7rem; color:#3182ce; margin-top:6px; font-weight: 600;">👤 ${count}人参加予定</div>
+                                    </div>
+                                    ${adminControls}
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            ` : '<div style="text-align:center; padding:40px; opacity:0.4; font-size: 0.9rem;">予定はありません</div>');
         }
 
-        for (let i = 0; i < firstDay; i++) calendarGrid.appendChild(document.createElement('div'));
+        // Calendar Grid Update (保持)
+        for (let i = 0; i < firstDay; i++) {
+            const empty = document.createElement('div');
+            empty.className = 'cal-day empty';
+            calendarGrid.appendChild(empty);
+        }
         for (let d = 1; d <= lastDate; d++) {
             const dayEl = document.createElement('div');
             dayEl.className = 'cal-day';
             const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
             const event = dynamicEvents[dateStr];
+            const dayOfWeek = new Date(year, month, d).getDay();
+            if (dayOfWeek === 0) dayEl.classList.add('is-sunday');
+            
             dayEl.innerHTML = `<span class="cal-day-num">${d}</span>`;
             if (event || (currentAttendanceData[dateStr] || []).length > 0) {
                 dayEl.classList.add('has-events');
@@ -275,5 +324,72 @@ window.openAttendanceModal = (date, title) => {
     modal.dataset.currentDate = date;
     document.getElementById('att-modal-date').textContent = date;
     document.getElementById('att-modal-event').textContent = title;
+    
+    updateAttendanceModalUI(date);
     modal.style.display = 'flex';
 };
+
+function updateAttendanceModalUI(date) {
+    const list = currentAttendanceData[date] || [];
+    const myAtt = list.find(a => a.userId === auth.currentUser.uid);
+    const membersList = document.getElementById('att-members-list');
+    const removeBtn = document.getElementById('att-remove-btn');
+
+    // ボタンの状態更新
+    document.querySelectorAll('.att-choice-btn').forEach(btn => {
+        btn.classList.remove('active-going', 'active-absent');
+        if (myAtt && myAtt.status === btn.dataset.status) {
+            btn.classList.add('active-' + myAtt.status);
+        }
+    });
+
+    if (removeBtn) removeBtn.style.display = myAtt ? 'block' : 'none';
+    
+    // 参加者名簿の更新
+    const attendees = list.filter(a => a.status === 'going');
+    if (membersList) {
+        membersList.innerHTML = attendees.length > 0 
+            ? attendees.map(a => `<li>${a.userName}</li>`).join('') 
+            : '<li>まだ参加者はいません</li>';
+    }
+}
+
+// 出欠ボタンのクリックイベント（デリゲーションで確実に動作させる）
+document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.att-choice-btn');
+    const removeBtn = e.target.closest('#att-remove-btn');
+    const date = document.getElementById('attendance-modal')?.dataset.currentDate;
+    if (!date || !auth.currentUser) return;
+
+    if (btn) {
+        const status = btn.dataset.status;
+        // 即座にUI反映（楽観的更新）
+        document.querySelectorAll('.att-choice-btn').forEach(b => b.classList.remove('active-going', 'active-absent'));
+        btn.classList.add('active-' + status);
+
+        try {
+            const attId = `${auth.currentUser.uid}_${date}`;
+            await db.collection("attendance").doc(attId).set({
+                userId: auth.currentUser.uid,
+                userName: auth.currentUser.displayName || auth.currentUser.email.split('@')[0],
+                date: date,
+                status: status,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        } catch (err) {
+            alert("登録に失敗しました: " + err.message);
+            updateAttendanceModalUI(date);
+        }
+    }
+
+    if (removeBtn) {
+        if (!confirm("出欠登録を取り消しますか？")) return;
+        try {
+            const attId = `${auth.currentUser.uid}_${date}`;
+            await db.collection("attendance").doc(attId).delete();
+        } catch (err) {
+            alert("取り消しに失敗しました");
+            updateAttendanceModalUI(date);
+        }
+    }
+});
