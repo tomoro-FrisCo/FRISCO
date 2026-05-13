@@ -126,14 +126,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (authForm) {
-        authForm.onsubmit = async (e) => {
-            e.preventDefault();
+        const handleAuth = async (e) => {
+            if (e) e.preventDefault();
             const email = document.getElementById('auth-email').value;
             const password = document.getElementById('auth-password').value;
             const displayName = document.getElementById('auth-display-name')?.value || "";
 
+            if (!email || !password) {
+                authErrorMsg.textContent = "メールとパスワードを入力してください";
+                authErrorMsg.style.display = 'block';
+                return;
+            }
+
             authSubmitBtn.disabled = true;
             authSubmitBtn.textContent = '処理中...';
+            authErrorMsg.style.display = 'none';
 
             if (isRegisterMode && !displayName) {
                 authErrorMsg.textContent = "名前を入力してください";
@@ -143,20 +150,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const result = isRegisterMode 
-                ? await registerUser(email, password, displayName)
-                : await loginUser(email, password);
+            try {
+                const result = isRegisterMode 
+                    ? await registerUser(email, password, displayName)
+                    : await loginUser(email, password);
 
-            if (result.success) {
-                authModal.style.display = 'none';
-                authForm.reset();
-            } else {
-                authErrorMsg.textContent = "エラー: " + result.error;
+                if (result.success) {
+                    authModal.style.display = 'none';
+                    authForm.reset();
+                } else {
+                    // エラーメッセージの翻訳
+                    let errMsg = result.error;
+                    if (errMsg.includes('auth/invalid-credential')) errMsg = "メールアドレスまたはパスワードが間違っています";
+                    if (errMsg.includes('auth/user-not-found')) errMsg = "ユーザーが見つかりません";
+                    if (errMsg.includes('auth/wrong-password')) errMsg = "パスワードが間違っています";
+                    if (errMsg.includes('auth/invalid-email')) errMsg = "メールアドレスの形式が正しくありません";
+                    
+                    authErrorMsg.textContent = "エラー: " + errMsg;
+                    authErrorMsg.style.display = 'block';
+                }
+            } catch (err) {
+                console.error("Auth Exception:", err);
+                authErrorMsg.textContent = "予期せぬエラーが発生しました";
                 authErrorMsg.style.display = 'block';
+            } finally {
+                authSubmitBtn.disabled = false;
+                authSubmitBtn.textContent = isRegisterMode ? '登録してログイン' : 'ログイン';
             }
-            authSubmitBtn.disabled = false;
-            authSubmitBtn.textContent = isRegisterMode ? '登録してログイン' : 'ログイン';
         };
+
+        authForm.onsubmit = handleAuth;
+        authSubmitBtn.onclick = handleAuth; // ボタンクリックにも直接反応させる
     }
 
     // ログイン状態の反映
@@ -221,7 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
         subscribeToWishes((wishes) => {
             wishListContainer.innerHTML = wishes.map(wish => {
                 const date = wish.timestamp ? new Date(wish.timestamp.seconds * 1000).toLocaleString('ja-JP', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'なう';
-                const canDelete = currentUser && (wish.userId === currentUser.uid); 
+                const isOwner = currentUser && (wish.userId === currentUser.uid); 
+                const isAdmin = currentUser && (currentUser.email === 'tomoro373@gmail.com'); // ここをあなたのメアドに
+                const canDelete = isOwner || isAdmin;
+                
                 const deleteBtn = canDelete ? `<button onclick="window.handleDeleteWish('${wish.id}')" style="background:none; border:none; color:#e53e3e; cursor:pointer; font-size:1.1rem; position:absolute; top:15px; right:15px; opacity:0.8;">🗑️</button>` : '';
                 return `
                     <div class="wish-card" style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid var(--color-accent); box-shadow: var(--shadow-sm); position: relative; animation: fadeIn 0.5s ease;">
