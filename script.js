@@ -100,32 +100,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateUI(user) {
         const isAdmin = user && user.email?.toLowerCase() === "tomorrow373tomorrow@gmail.com";
+        const name = user ? (user.displayName || user.email.split('@')[0] || 'Member') : '';
         
         if (navAuthItem) {
             if (user) {
                 navAuthItem.innerHTML = `
                     <div style="display:flex; align-items:center; gap:8px;">
-                        <span style="font-size:0.7rem; font-weight:800;">👤 ${user.displayName || 'Member'}</span>
-                        <button id="logout-btn" class="btn" style="background:var(--color-navy); color:white; padding:4px 8px; font-size:0.6rem;">LOGOUT</button>
+                        <span style="font-size:0.7rem; font-weight:800; color:var(--color-navy);">👤 ${name}</span>
+                        <button id="logout-btn" class="btn" style="background:var(--color-navy); color:white; padding:4px 8px; font-size:0.6rem; border-radius:4px;">LOGOUT</button>
                     </div>
                 `;
-                document.getElementById('logout-btn').onclick = () => auth.signOut();
+                const lBtn = document.getElementById('logout-btn');
+                if (lBtn) lBtn.onclick = () => auth.signOut();
             } else {
-                navAuthItem.innerHTML = `<button onclick="window.openAuthModal()" class="btn" style="background:var(--color-navy); color:white; padding:8px 15px; font-size:0.75rem;">LOGIN</button>`;
+                navAuthItem.innerHTML = `<button onclick="window.openAuthModal()" class="btn" style="background:var(--color-navy); color:white; padding:8px 15px; font-size:0.75rem; border-radius:4px;">LOGIN</button>`;
             }
         }
 
         const hC = document.getElementById('hero-login-container');
         const hD = document.getElementById('hero-user-display');
         if (hC) hC.style.display = user ? 'none' : 'block';
-        if (hD) hD.innerHTML = user ? `🌟 ${user.displayName}さん、こんにちは！` : '';
+        if (hD) hD.innerHTML = user ? `🌟 ${name}さん、こんにちは！` : '';
 
         // Realtime Subscriptions
-        db.collection("events").orderBy("date", "asc").onSnapshot((s) => {
-            dynamicEvents = {};
-            s.forEach(d => { dynamicEvents[d.data().date] = d.data().title; });
-            renderCalendar();
-        });
+        if (db) {
+            db.collection("events").orderBy("date", "asc").onSnapshot((s) => {
+                dynamicEvents = {};
+                s.forEach(d => { dynamicEvents[d.data().date] = d.data().title; });
+                renderCalendar();
+            });
+        }
 
         initWishList(user, isAdmin);
         renderCalendar();
