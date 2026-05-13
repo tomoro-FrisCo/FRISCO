@@ -273,13 +273,18 @@ ul, ol {
 }
 
 .menu-toggle {
-    display: block !important;
-    margin-left: 10px;
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
     background: transparent;
     border: none;
     cursor: pointer;
     z-index: 10001;
-    width: 30px;
+    margin-left: 10px;
+    position: relative;
 }
 
 .menu-toggle span {
@@ -287,24 +292,24 @@ ul, ol {
     width: 25px;
     height: 2px;
     background: var(--color-navy);
-    margin: 5px auto;
+    position: absolute;
+    left: 7.5px;
     transition: var(--transition-normal);
 }
+
+.menu-toggle span:nth-child(1) { top: 12px; }
+.menu-toggle span:nth-child(2) { top: 19px; }
+.menu-toggle span:nth-child(3) { top: 26px; }
+
+.menu-toggle.active span:nth-child(1) { top: 19px; transform: rotate(45deg); }
+.menu-toggle.active span:nth-child(2) { opacity: 0; }
+.menu-toggle.active span:nth-child(3) { top: 19px; transform: rotate(-45deg); }
 
 @media (max-width: 480px) {
     .nav {
         width: 80%;
     }
 }
-
-.menu-toggle span:nth-child(1) { top: 0; }
-.menu-toggle span:nth-child(2) { top: 9px; }
-.menu-toggle span:nth-child(3) { top: 18px; }
-
-.menu-toggle.active span:nth-child(1) { top: 9px; transform: rotate(45deg); }
-.menu-toggle.active span:nth-child(2) { opacity: 0; }
-.menu-toggle.active span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
-
 
 /* --- Hero Section (TOP) --- */
 .hero {

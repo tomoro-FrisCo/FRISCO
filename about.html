@@ -30,28 +30,70 @@
         </div>
     </header>
 
-    <main style="padding-top: 100px;">
+    <main style="padding-top: 120px;">
+        <!-- Representative Message -->
         <section class="section">
-            <div class="container" style="max-width: 800px;">
-                <div class="section-header fade-in">
-                    <h2 class="section-title">ABOUT US</h2>
-                    <p class="section-subtitle">明治学院大学 アルティメットサークル FrisCo</p>
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" style="font-family: var(--font-en); font-weight: 900;">MESSAGE</h2>
+                    <p class="section-subtitle">代表メッセージ</p>
                 </div>
-                
-                <div class="glass-panel fade-in-up" style="margin-top: 40px; line-height: 1.8;">
-                    <h3 style="color: var(--color-navy); margin-bottom: 20px; font-weight: 800;">遊びを本気に、最高の仲間と。</h3>
-                    <p>FrisCoは、明治学院大学公認のアルティメットサークルです。「アルティメット」という競技を通じて、学年や学部の垣根を越えた最高の仲間たちと切磋琢磨しています。</p>
-                    <p style="margin-top: 15px;">初心者大歓迎！ほとんどのメンバーが大学から始めています。運動が苦手な人でも、ディスク（フリスビー）一枚で輝ける場所がここにあります。</p>
-                </div>
-
-                <div class="fade-in-up" style="margin-top: 40px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                    <div class="glass-panel-small">
-                        <h4 style="font-weight: 800; margin-bottom: 10px; color: var(--color-accent);">ACTIVITY</h4>
-                        <p style="font-size: 0.9rem;">週2回（月・木）を中心に、白金キャンパスや戸塚キャンパス周辺で活動中。</p>
+                <div class="glass-panel" style="margin-top: 50px; display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: center;">
+                    <div style="text-align: center;">
+                        <div style="width: 150px; height: 150px; background: var(--color-navy); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">👤</div>
+                        <p style="font-weight: 800; color: var(--color-navy);">代表：智朗</p>
                     </div>
-                    <div class="glass-panel-small">
-                        <h4 style="font-weight: 800; margin-bottom: 10px; color: var(--color-accent);">MEMBER</h4>
-                        <p style="font-size: 0.9rem;">男女問わず、個性を尊重し合えるアットホームな雰囲気が自慢です。</p>
+                    <div>
+                        <h3 style="font-size: 1.5rem; color: var(--color-navy); margin-bottom: 20px; font-weight: 800;">「遊び」を「本気」に変える。</h3>
+                        <p style="line-height: 1.8;">FrisCoは、明治学院大学公認のアルティメットサークルです。「遊びを本気に、最高の仲間と。」をスローガンに、日々の練習に取り組んでいます。アルティメットは大学から始める人がほとんどで、全員が同じスタートラインから成長できる魅力的なスポーツです。最高の仲間と一緒に、新しい挑戦をしてみませんか？</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Info -->
+        <section class="section bg-light">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" style="font-family: var(--font-en); font-weight: 900;">ACTIVITY</h2>
+                    <p class="section-subtitle">活動内容</p>
+                </div>
+                <div style="margin-top: 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
+                    <div class="glass-panel-small" style="background: white;">
+                        <h4 style="font-weight: 800; color: var(--color-accent); margin-bottom: 15px;">TIME & PLACE</h4>
+                        <p style="font-size: 0.95rem; line-height: 1.7;">週2回（月・木）を中心に活動しています。<br>場所：白金キャンパス体育館、戸塚キャンパス周辺グラウンドなど</p>
+                    </div>
+                    <div class="glass-panel-small" style="background: white;">
+                        <h4 style="font-weight: 800; color: var(--color-accent); margin-bottom: 15px;">CONTENT</h4>
+                        <p style="font-size: 0.95rem; line-height: 1.7;">基礎練習、戦術確認、ミニゲームなど。初心者の方には先輩が優しくディスクの投げ方から教えます！</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Member Stats -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" style="font-family: var(--font-en); font-weight: 900;">MEMBER</h2>
+                    <p class="section-subtitle">メンバー構成</p>
+                </div>
+                <div style="margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div class="glass-panel" style="text-align: center;">
+                        <h4 style="font-weight: 800; margin-bottom: 25px;">男女比</h4>
+                        <div style="display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin-bottom: 15px;">
+                            <div style="width: 60%; background: #3182ce; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">MEN 60%</div>
+                            <div style="width: 40%; background: #ed64a6; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">WOMEN 40%</div>
+                        </div>
+                        <p style="font-size: 0.85rem; opacity: 0.7;">男女問わず、仲良く活動しています！</p>
+                    </div>
+                    <div class="glass-panel" style="text-align: center;">
+                        <h4 style="font-weight: 800; margin-bottom: 25px;">初心者割合</h4>
+                        <div style="display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin-bottom: 15px;">
+                            <div style="width: 90%; background: var(--color-accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">BEGINNERS 90%</div>
+                            <div style="width: 10%; background: var(--color-navy); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">EXP 10%</div>
+                        </div>
+                        <p style="font-size: 0.85rem; opacity: 0.7;">ほとんどのメンバーが大学から始めています！</p>
                     </div>
                 </div>
             </div>
