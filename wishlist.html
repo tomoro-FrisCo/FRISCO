@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WISH LIST | FrisCo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .wishlist-hero {
+            background: var(--color-navy);
+            color: white;
+            padding: 100px 20px 60px;
+            text-align: center;
+        }
+        .wishlist-container {
+            max-width: 800px;
+            margin: -40px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <!-- Navigation -->
+    <header class="header scrolled">
+        <div class="header-inner">
+            <a href="index.html" class="logo" style="color: var(--color-navy) !important;">FrisCo</a>
+            <div class="header-right">
+                <div id="nav-auth-item" style="display: flex; align-items: center;">
+                    <!-- Login status will be here -->
+                </div>
+                <button class="menu-toggle" aria-label="メニューを開く">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+            <nav class="nav">
+                <ul class="nav-list">
+                    <li><a href="index.html">HOME</a></li>
+                    <li><a href="about.html">ABOUT US</a></li>
+                    <li><a href="wishlist.html" class="active">WISH LIST</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="wishlist-hero">
+            <h1 class="fade-in" style="font-size: 2.5rem; font-family: var(--font-en); font-weight: 800; letter-spacing: 2px;">WISH LIST</h1>
+            <p class="fade-in" style="opacity: 0.8; margin-top: 10px;">みんなの「やりたい！」を共有して、サークルをもっと楽しく。</p>
+        </section>
+
+        <div class="wishlist-container">
+            <!-- 投稿フォーム -->
+            <div id="wish-form-container" class="fade-in-up" style="margin-bottom: 40px;">
+                <!-- JSで中身を制御 -->
+            </div>
+
+            <!-- 投稿一覧 -->
+            <div id="wish-list-container" class="fade-in-up" style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                <!-- 投稿がここにカード形式で表示されます -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container text-center">
+            <div class="footer-logo">FrisCo</div>
+            <p class="copyright">&copy; 2026 Meiji Gakuin University Ultimate Circle FrisCo.</p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div id="auth-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content glass-panel shadow-lg">
+            <button class="modal-close">&times;</button>
+            <div id="auth-form-container">
+                <h3 id="auth-modal-title">LOGIN</h3>
+                <form id="auth-form">
+                    <div id="register-only-fields" style="display:none;">
+                        <input type="text" id="auth-display-name" placeholder="サークル内での名前（表示名）">
+                    </div>
+                    <input type="email" id="auth-email" placeholder="メールアドレス" required>
+                    <input type="password" id="auth-password" placeholder="パスワード" required>
+                    <button type="submit" id="auth-submit-btn" class="btn btn-primary btn-block mt-3">ログイン</button>
+                </form>
+                <p id="auth-switch-text" class="mt-3" style="font-size: 0.85rem;">アカウントをお持ちでないですか？ <a href="#" id="auth-switch-link" style="color: var(--color-accent); font-weight: bold;">新規登録</a></p>
+                <p id="auth-error-msg" style="color: #e53e3e; font-size: 0.8rem; margin-top: 10px; display: none;"></p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>

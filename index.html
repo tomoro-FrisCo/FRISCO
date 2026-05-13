@@ -33,6 +33,7 @@
                 <ul class="nav-list">
                     <li><a href="#top">TOP</a></li>
                     <li><a href="about.html">ABOUT US</a></li>
+                    <li><a href="wishlist.html">WISH LIST</a></li>
                 </ul>
             </nav>
         </div>
@@ -44,12 +45,13 @@
             <div class="hero-content fade-in-up" style="margin-top: 0; padding-top: 60px; max-width: 100%;">
                 <h1 class="hero-title-large" style="color: var(--color-navy) !important;">FrisCo.</h1>
                 <p class="hero-subtitle-large" style="color: var(--color-navy) !important;">MEIJI GAKUIN UNIV.</p>
-                <div id="hero-user-display" style="margin-top: 20px; font-weight: bold; color: var(--color-navy); font-size: 1.1rem; min-height: 1.5em;"></div>
                 
-                <div style="margin-top: 60px; display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; padding: 0 20px;">
-                    <a href="#join" class="btn btn-large cta-pulse" style="background: var(--color-navy); color: var(--color-white); box-shadow: none; padding: 18px 40px; min-width: 200px;">JOIN US</a>
-                    <a href="about.html" class="btn btn-large" style="background: white; color: var(--color-navy); border: 2px solid var(--color-navy); box-shadow: none; padding: 18px 40px; min-width: 200px;">ABOUT US</a>
+                <div style="margin-top: 40px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 0 20px;">
+                    <a href="#join" class="btn btn-large cta-pulse" style="background: var(--color-navy); color: var(--color-white); box-shadow: none; padding: 15px 30px; min-width: 160px; font-size: 0.9rem;">JOIN US</a>
+                    <a href="about.html" class="btn btn-large" style="background: white; color: var(--color-navy); border: 2px solid var(--color-navy); box-shadow: none; padding: 15px 30px; min-width: 160px; font-size: 0.9rem;">ABOUT US</a>
                 </div>
+
+                <div id="hero-user-display" style="margin-top: 20px; font-weight: bold; color: var(--color-navy); font-size: 1.1rem; min-height: 1.5em;"></div>
             </div>
             <div class="scroll-indicator" style="color: var(--color-navy);">
                 <span>Scroll</span>
@@ -121,22 +123,16 @@
             </div>
         </section>
 
-        <!-- WISH LIST (意見箱) -->
-        <section id="wishlist" class="section bg-light">
-            <div class="container" style="max-width: 800px;">
+        <!-- WISH LIST 案内 -->
+        <section class="section bg-light text-center">
+            <div class="container">
                 <div class="section-header fade-in">
                     <h2 class="section-title">WISH LIST</h2>
-                    <p class="section-subtitle">みんなの「やりたい！」を共有しよう</p>
+                    <p class="section-subtitle">みんなの「やりたい！」が集まる場所</p>
                 </div>
-
-                <!-- 投稿フォーム（JSで中身を切り替えます） -->
-                <div id="wish-form-container" class="wish-form-wrapper fade-in-up" style="margin-bottom: 50px;">
-                    <!-- Login message or TextArea will be here -->
-                </div>
-
-                <!-- 意見一覧表示エリア -->
-                <div id="wish-list-container" class="fade-in-up" style="display: grid; grid-template-columns: 1fr; gap: 15px;">
-                    <!-- 投稿内容がここにカード形式で入ります -->
+                <div class="fade-in-up" style="margin-top: 30px;">
+                    <p style="margin-bottom: 30px; opacity: 0.8;">練習メニューの提案やイベントのアイデアなど、<br>自由な意見を匿名で投稿できます。</p>
+                    <a href="wishlist.html" class="btn btn-large" style="background: var(--color-navy); color: white; padding: 15px 50px;">意見箱を見に行く</a>
                 </div>
             </div>
         </section>

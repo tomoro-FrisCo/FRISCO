@@ -17,15 +17,34 @@ window.openAuthModal = () => {
     }
 };
 
-window.handleDeleteWish = async (wishId) => {
-    if (!confirm("この投稿を削除しますか？")) return;
-    try {
-        const res = await deleteWish(wishId);
-        if (!res.success) alert("削除に失敗しました: " + res.error);
-    } catch (e) {
-        console.error("Delete error:", e);
-    }
-};
+    window.handleDeleteWish = async (wishId) => {
+        if (!confirm("この投稿を削除しますか？")) return;
+        try {
+            const res = await deleteWish(wishId);
+            if (!res.success) alert("削除に失敗しました: " + res.error);
+        } catch (e) {
+            console.error("Delete error:", e);
+        }
+    };
+
+    // --- 管理者用：全削除機能（一時的） ---
+    window.clearAllWishes = async () => {
+        if (!confirm("【警告】すべての投稿を完全に消去します。よろしいですか？")) return;
+        const wishListContainer = document.getElementById('wish-list-container');
+        const cards = wishListContainer.querySelectorAll('button[onclick*="handleDeleteWish"]');
+        
+        if (cards.length === 0) {
+            alert("削除可能な投稿が見つかりません。");
+            return;
+        }
+
+        alert(cards.length + "件の投稿を順次削除します。完了までお待ちください。");
+        for (let btn of cards) {
+            const wishId = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+            await deleteWish(wishId);
+        }
+        alert("削除が完了しました。");
+    };
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- Global State ---
@@ -190,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const wishFormContainer = document.getElementById('wish-form-container');
         
         if (user) {
+            // ... (既存のナビ更新)
             navAuthItem.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 8px;">
                     <span style="font-size: 0.7rem; font-weight: 800; color: var(--color-navy); white-space: nowrap;">👤 ${user.displayName || 'Member'}</span>
@@ -199,7 +219,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('nav-logout-btn').onclick = logoutUser;
             
             if (wishFormContainer) {
+                const isAdmin = user.email === 'tomoro373@gmail.com';
+                const adminBtn = isAdmin ? `<button onclick="window.clearAllWishes()" class="btn" style="background: #e53e3e; color: white; padding: 5px 15px; font-size: 0.7rem; margin-bottom: 15px; border-radius: 5px;">【管理者】表示されている全投稿を削除</button>` : '';
+
                 wishFormContainer.innerHTML = `
+                    ${adminBtn}
                     <div class="glass-panel" style="background: white; padding: 30px; border-radius: 15px; box-shadow: var(--shadow-sm);">
                         <textarea id="wish-input" placeholder="例：BBQがしたい！、新しい練習メニューを試したい！など自由にどうぞ" style="width: 100%; height: 100px; padding: 15px; border: 1px solid rgba(27, 54, 93, 0.1); border-radius: 10px; margin-bottom: 15px; font-family: var(--font-ja); resize: none; font-size: 0.95rem;"></textarea>
                         <div style="text-align: right;">
@@ -211,6 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (heroUserDisplay) heroUserDisplay.innerHTML = `🌟 ${user.displayName}さん、こんにちは！`;
         } else {
+            // ... (ログイン案内)
             navAuthItem.innerHTML = `<button id="nav-login-btn" class="btn" onclick="window.openAuthModal()" style="background: var(--color-navy); color: var(--color-white); padding: 8px 15px; font-size: 0.75rem; position: relative; z-index: 10005 !important;">LOGIN</button>`;
             if (wishFormContainer) {
                 wishFormContainer.innerHTML = `
