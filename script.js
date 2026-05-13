@@ -1,28 +1,13 @@
 /**
- * FrisCo Official Site - Ultra Stable Version (Compat Mode)
+ * FrisCo Official Site - Final Stable Script
+ * (Requires Firebase pre-initialized in index.html)
  */
 
-// --- Firebase Config (Correct Values) ---
-const firebaseConfig = {
-    apiKey: "AIzaSyCM9hJ69HpvV_gCdapm2UmkxrumeNsJhgw",
-    authDomain: "frisco-web.firebaseapp.com",
-    projectId: "frisco-web",
-    storageBucket: "frisco-web.firebasestorage.app",
-    messagingSenderId: "1001144206780",
-    appId: "1:1001144206780:web:ca8e0a1e5cd792ee0057b9",
-    measurementId: "G-T534ZTPKYT"
-};
+// Global Reference to pre-initialized Firebase from index.html
+const auth = window.auth;
+const db = window.db;
 
-// --- Initialization ---
-let app, auth, db;
-try {
-    app = firebase.initializeApp(firebaseConfig);
-    auth = firebase.auth();
-    db = firebase.firestore();
-    console.log("Firebase initialized successfully");
-} catch (e) {
-    console.error("Firebase initialization failed:", e);
-}
+console.log("FrisCo Core Script Starting...");
 
 /**
  * --- Global Functions ---
@@ -43,6 +28,7 @@ window.handleAddEvent = async () => {
     try {
         await db.collection("events").doc(dIn.value).set({ date: dIn.value, title: tIn.value });
         tIn.value = '';
+        alert("保存しました");
     } catch (e) { alert("保存エラー: " + e.message); }
 };
 
@@ -57,6 +43,11 @@ window.handleDeleteWish = async (id) => {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    if (!auth || !db) {
+        console.error("Firebase not found. Check index.html initialization.");
+        return;
+    }
+
     let currentUser = null;
     let dynamicEvents = {};
     let currentAttendanceData = {};
@@ -71,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const detailPanel = document.getElementById('calendar-detail-panel');
     const monthYearDisplay = document.getElementById('month-year');
 
-    // Click Bindings (SUPER ROBUST)
+    // Click Bindings
     document.addEventListener('click', (e) => {
         const target = e.target.closest('#hero-login-btn, .menu-toggle, .modal-close, #prev-month, #next-month');
         if (!target) return;
@@ -84,7 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelector('.nav')?.classList.toggle('active');
         } else if (target.classList.contains('modal-close')) {
             authModal.style.display = 'none';
-            document.getElementById('attendance-modal').style.display = 'none';
+            const attModal = document.getElementById('attendance-modal');
+            if (attModal) attModal.style.display = 'none';
         } else if (target.id === 'prev-month') {
             currentDate.setMonth(currentDate.getMonth() - 1);
             renderCalendar();
@@ -107,8 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function updateUI(user) {
-        const adminEmail = "tomorrow373tomorrow@gmail.com".toLowerCase();
-        const isAdmin = user && user.email?.toLowerCase() === adminEmail;
+        const isAdmin = user && user.email?.toLowerCase() === "tomorrow373tomorrow@gmail.com";
         
         if (navAuthItem) {
             if (user) {
@@ -129,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (hC) hC.style.display = user ? 'none' : 'block';
         if (hD) hD.innerHTML = user ? `🌟 ${user.displayName}さん、こんにちは！` : '';
 
-        // Events Subscription
+        // Realtime Subscriptions
         db.collection("events").orderBy("date", "asc").onSnapshot((s) => {
             dynamicEvents = {};
             s.forEach(d => { dynamicEvents[d.data().date] = d.data().title; });
@@ -243,7 +234,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Auth Form
     if (authForm) {
         authForm.onsubmit = async (e) => {
             e.preventDefault();
