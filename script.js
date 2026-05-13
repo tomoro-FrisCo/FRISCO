@@ -98,27 +98,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Header & Scroll ---
     const header = document.querySelector('.header');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) header.classList.add('scrolled');
-        else header.classList.remove('scrolled');
-    });
+    if (header) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) header.classList.add('scrolled');
+            else header.classList.remove('scrolled');
+        });
+    }
 
     const menuToggle = document.querySelector('.menu-toggle');
     const nav = document.querySelector('.nav');
-    if (menuToggle) {
+    if (menuToggle && nav) {
         menuToggle.onclick = () => {
             menuToggle.classList.toggle('active');
             nav.classList.toggle('active');
         };
     }
 
-    // Appearance
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) entry.target.classList.add('visible');
-        });
-    }, { threshold: 0.1 });
-    document.querySelectorAll('.fade-in, .fade-in-up').forEach(el => observer.observe(el));
+    // Appearance (IntersectionObserver)
+    try {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in, .fade-in-up').forEach(el => observer.observe(el));
+    } catch (e) {
+        console.warn("Animation observer failed:", e);
+        // フォールバック: エラー時はすべて表示
+        document.querySelectorAll('.fade-in, .fade-in-up').forEach(el => el.style.opacity = '1');
+    }
 
     // --- Modals ---
     document.querySelectorAll('.modal-close').forEach(btn => {

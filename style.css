@@ -1065,29 +1065,42 @@ ul, ol {
 .fade-in {
     opacity: 0;
     transition: opacity 0.8s ease, transform 0.8s ease;
+    animation: forceShow 0.1s forwards;
+    animation-delay: 2s; /* JSが動かなければ2秒後に強制表示 */
 }
 
 .fade-in-up {
     opacity: 0;
     transform: translateY(40px);
     transition: opacity 0.8s ease, transform 0.8s ease;
+    animation: forceShow 0.1s forwards;
+    animation-delay: 2s;
 }
 
 .fade-in-left {
     opacity: 0;
     transform: translateX(-40px);
     transition: opacity 0.8s ease, transform 0.8s ease;
+    animation: forceShow 0.1s forwards;
+    animation-delay: 2s;
 }
 
 .fade-in-right {
     opacity: 0;
     transform: translateX(40px);
     transition: opacity 0.8s ease, transform 0.8s ease;
+    animation: forceShow 0.1s forwards;
+    animation-delay: 2s;
 }
 
 .visible {
-    opacity: 1;
-    transform: translate(0, 0);
+    opacity: 1 !important;
+    transform: translate(0, 0) !important;
+    animation: none !important;
+}
+
+@keyframes forceShow {
+    to { opacity: 1; transform: translate(0, 0); }
 }
 
 
