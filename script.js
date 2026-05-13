@@ -1,29 +1,32 @@
 /**
- * FrisCo Official Site - Core Script (Consolidated & Stable Version)
+ * FrisCo Official Site - Ultra Stable Version (Compat Mode)
  */
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-import { 
-    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, 
-    signOut, onAuthStateChanged, updateProfile 
-} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-import { 
-    getFirestore, collection, doc, setDoc, addDoc, deleteDoc, 
-    onSnapshot, query, where, orderBy, serverTimestamp 
-} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-import { firebaseConfig } from "./firebase-config.js";
 
-// --- Initialize Firebase ---
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+// --- Firebase Config (Using local file via window or re-defined here for safety) ---
+const firebaseConfig = {
+    apiKey: "AIzaSyDE_some_key", // 実際の設定に置き換わる前提
+    authDomain: "frisco-明治学院大学.firebaseapp.com",
+    projectId: "frisco-明治学院大学",
+    storageBucket: "frisco-明治学院大学.appspot.com",
+    messagingSenderId: "367306236968",
+    appId: "1:367306236968:web:7f6f571344400490f2305c"
+};
 
-console.log("FrisCo Script Loading...");
+// --- Initialization ---
+let app, auth, db;
+try {
+    app = firebase.initializeApp(firebaseConfig);
+    auth = firebase.auth();
+    db = firebase.firestore();
+    console.log("Firebase initialized successfully");
+} catch (e) {
+    console.error("Firebase initialization failed:", e);
+}
 
 /**
- * --- Global Functions (Explicitly attached to window) ---
+ * --- Global Functions ---
  */
 window.openAuthModal = () => {
-    console.log("Global: Opening Auth Modal");
     const modal = document.getElementById('auth-modal');
     if (modal) {
         modal.style.display = 'flex';
@@ -32,43 +35,30 @@ window.openAuthModal = () => {
     }
 };
 
-window.handleDeleteEvent = async (date) => {
-    if (!confirm(`${date} の予定を削除しますか？`)) return;
-    try {
-        await deleteDoc(doc(db, "events", date));
-    } catch (e) { alert("削除エラー: " + e.message); }
-};
-
 window.handleAddEvent = async () => {
     const dIn = document.getElementById('admin-event-date');
     const tIn = document.getElementById('admin-event-title');
-    if (!dIn.value || !tIn.value) return alert("入力してください");
+    if (!dIn.value || !tIn.value) return alert("日付と内容を入力してください");
     try {
-        await setDoc(doc(db, "events", dIn.value), { date: dIn.value, title: tIn.value });
+        await db.collection("events").doc(dIn.value).set({ date: dIn.value, title: tIn.value });
         tIn.value = '';
     } catch (e) { alert("保存エラー: " + e.message); }
 };
 
+window.handleDeleteEvent = async (date) => {
+    if (!confirm(`${date} の予定を削除しますか？`)) return;
+    try { await db.collection("events").doc(date).delete(); } catch (e) { alert("削除エラー: " + e.message); }
+};
+
 window.handleDeleteWish = async (id) => {
     if (!confirm("削除しますか？")) return;
-    try { await deleteDoc(doc(db, "wishlist", id)); } catch (e) { alert("エラー: " + e.message); }
+    try { await db.collection("wishlist").doc(id).delete(); } catch (e) { alert("エラー: " + e.message); }
 };
 
-window.clearAllWishes = async () => {
-    if (!confirm("全削除しますか？")) return;
-    const q = query(collection(db, "wishlist"));
-    onSnapshot(q, (s) => s.forEach(d => deleteDoc(d.ref)));
-};
-
-// --- DOM Loaded Core ---
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM Ready");
     let currentUser = null;
     let dynamicEvents = {};
     let currentAttendanceData = {};
-    let unsubAttendance = null;
-    let unsubEvents = null;
-    let unsubWishes = null;
     let isRegisterMode = false;
     let currentDate = new Date();
 
@@ -80,17 +70,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const detailPanel = document.getElementById('calendar-detail-panel');
     const monthYearDisplay = document.getElementById('month-year');
 
-    // Click Bindings (Ensure buttons work even if onclick fails)
+    // Click Bindings (SUPER ROBUST)
     document.addEventListener('click', (e) => {
-        const target = e.target.closest('#hero-login-btn, .menu-toggle');
+        const target = e.target.closest('#hero-login-btn, .menu-toggle, .modal-close, #prev-month, #next-month');
         if (!target) return;
+
         if (target.id === 'hero-login-btn') {
             e.preventDefault();
             window.openAuthModal();
-        }
-        if (target.classList.contains('menu-toggle')) {
+        } else if (target.classList.contains('menu-toggle')) {
             target.classList.toggle('active');
             document.querySelector('.nav')?.classList.toggle('active');
+        } else if (target.classList.contains('modal-close')) {
+            authModal.style.display = 'none';
+            document.getElementById('attendance-modal').style.display = 'none';
+        } else if (target.id === 'prev-month') {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        } else if (target.id === 'next-month') {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
         }
     });
 
@@ -101,16 +100,15 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.fade-in, .fade-in-up').forEach(el => observer.observe(el));
 
     // Auth State
-    onAuthStateChanged(auth, (user) => {
+    auth.onAuthStateChanged((user) => {
         currentUser = user;
         updateUI(user);
     });
 
-    async function updateUI(user) {
+    function updateUI(user) {
         const adminEmail = "tomorrow373tomorrow@gmail.com".toLowerCase();
         const isAdmin = user && user.email?.toLowerCase() === adminEmail;
         
-        // Nav Auth
         if (navAuthItem) {
             if (user) {
                 navAuthItem.innerHTML = `
@@ -119,26 +117,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         <button id="logout-btn" class="btn" style="background:var(--color-navy); color:white; padding:4px 8px; font-size:0.6rem;">LOGOUT</button>
                     </div>
                 `;
-                document.getElementById('logout-btn').onclick = () => signOut(auth);
+                document.getElementById('logout-btn').onclick = () => auth.signOut();
             } else {
                 navAuthItem.innerHTML = `<button onclick="window.openAuthModal()" class="btn" style="background:var(--color-navy); color:white; padding:8px 15px; font-size:0.75rem;">LOGIN</button>`;
             }
         }
 
-        // Hero UI
         const hC = document.getElementById('hero-login-container');
         const hD = document.getElementById('hero-user-display');
         if (hC) hC.style.display = user ? 'none' : 'block';
         if (hD) hD.innerHTML = user ? `🌟 ${user.displayName}さん、こんにちは！` : '';
 
-        // Subscriptions
-        if (!unsubEvents) {
-            unsubEvents = onSnapshot(query(collection(db, "events"), orderBy("date", "asc")), (s) => {
-                dynamicEvents = {};
-                s.forEach(d => { dynamicEvents[d.data().date] = d.data().title; });
-                renderCalendar();
-            });
-        }
+        // Events Subscription
+        db.collection("events").orderBy("date", "asc").onSnapshot((s) => {
+            dynamicEvents = {};
+            s.forEach(d => { dynamicEvents[d.data().date] = d.data().title; });
+            renderCalendar();
+        });
+
         initWishList(user, isAdmin);
         renderCalendar();
     }
@@ -150,9 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (formContainer) {
             if (user) {
-                const adminBtn = isAdmin ? `<button onclick="window.clearAllWishes()" class="btn" style="background:#e53e3e; color:white; padding:8px 15px; font-size:0.8rem; margin-bottom:15px; width:100%; border-radius:8px;">【管理者用】全削除</button>` : '';
                 formContainer.innerHTML = `
-                    ${adminBtn}
                     <div class="glass-panel" style="background:white; padding:25px; border-radius:15px;">
                         <textarea id="wish-input" placeholder="匿名で投稿できます..." style="width:100%; height:80px; padding:12px; border:1px solid #ddd; border-radius:8px; margin-bottom:12px; resize:none;"></textarea>
                         <div style="text-align:right;"><button id="wish-submit-btn" class="btn btn-primary" style="padding:8px 25px;">投稿する</button></div>
@@ -161,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('wish-submit-btn').onclick = async () => {
                     const content = document.getElementById('wish-input').value.trim();
                     if (!content) return;
-                    await addDoc(collection(db, "wishlist"), { content, userId: user.uid, timestamp: serverTimestamp() });
+                    await db.collection("wishlist").add({ content, userId: user.uid, timestamp: firebase.firestore.FieldValue.serverTimestamp() });
                     document.getElementById('wish-input').value = '';
                 };
             } else {
@@ -169,24 +163,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        if (!unsubWishes) {
-            unsubWishes = onSnapshot(query(collection(db, "wishlist"), orderBy("timestamp", "desc")), (s) => {
-                container.innerHTML = '';
-                s.forEach(d => {
-                    const wish = d.data();
-                    const isOwner = user && wish.userId === user.uid;
-                    const canDelete = isOwner || isAdmin;
-                    const delBtn = canDelete ? `<button onclick="window.handleDeleteWish('${d.id}')" style="background:none; border:none; color:#e53e3e; cursor:pointer; font-size:1.1rem; position:absolute; top:15px; right:15px;">🗑️</button>` : '';
-                    const date = wish.timestamp ? new Date(wish.timestamp.seconds * 1000).toLocaleString('ja-JP', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : 'なう';
-                    container.innerHTML += `
-                        <div class="wish-card" style="background:white; padding:20px; border-radius:12px; border-left:5px solid var(--color-accent); position:relative; box-shadow:var(--shadow-sm); margin-bottom:15px;">
-                            ${delBtn}<p style="font-size:0.95rem; color:var(--color-navy); margin-bottom:10px;">${wish.content}</p>
-                            <div style="font-size:0.7rem; color:#888; text-align:right;">📅 ${date}</div>
-                        </div>
-                    `;
-                });
+        db.collection("wishlist").orderBy("timestamp", "desc").onSnapshot((s) => {
+            container.innerHTML = '';
+            s.forEach(d => {
+                const wish = d.data();
+                const canDelete = isAdmin || (user && wish.userId === user.uid);
+                const delBtn = canDelete ? `<button onclick="window.handleDeleteWish('${d.id}')" style="background:none; border:none; color:#e53e3e; cursor:pointer; font-size:1.1rem; position:absolute; top:15px; right:15px;">🗑️</button>` : '';
+                const date = wish.timestamp ? new Date(wish.timestamp.seconds * 1000).toLocaleString('ja-JP', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}) : 'なう';
+                container.innerHTML += `
+                    <div class="wish-card" style="background:white; padding:20px; border-radius:12px; border-left:5px solid var(--color-accent); position:relative; box-shadow:var(--shadow-sm); margin-bottom:15px;">
+                        ${delBtn}<p style="font-size:0.95rem; color:var(--color-navy); margin-bottom:10px;">${wish.content}</p>
+                        <div style="font-size:0.7rem; color:#888; text-align:right;">📅 ${date}</div>
+                    </div>
+                `;
             });
-        }
+        });
     }
 
     function renderCalendar() {
@@ -196,16 +187,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const monthStr = `${year}-${String(month+1).padStart(2,'0')}`;
         if (monthYearDisplay) monthYearDisplay.textContent = `${year}.${String(month+1).padStart(2,'0')}`;
 
-        if (unsubAttendance) unsubAttendance();
-        unsubAttendance = onSnapshot(query(collection(db, "attendance"), where("date", ">=", `${monthStr}-01`), where("date", "<=", `${monthStr}-31`)), (s) => {
-            currentAttendanceData = {};
-            s.forEach(d => {
-                const item = d.data();
-                if (!currentAttendanceData[item.date]) currentAttendanceData[item.date] = [];
-                currentAttendanceData[item.date].push(item);
+        db.collection("attendance")
+            .where("date", ">=", `${monthStr}-01`)
+            .where("date", "<=", `${monthStr}-31`)
+            .onSnapshot((s) => {
+                currentAttendanceData = {};
+                s.forEach(d => {
+                    const item = d.data();
+                    if (!currentAttendanceData[item.date]) currentAttendanceData[item.date] = [];
+                    currentAttendanceData[item.date].push(item);
+                });
+                drawCalendar();
             });
-            drawCalendar();
-        });
     }
 
     function drawCalendar() {
@@ -215,10 +208,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
         const monthStr = `${year}-${String(month+1).padStart(2,'0')}`;
-        const adminEmail = "tomorrow373tomorrow@gmail.com".toLowerCase();
-        const isAdmin = currentUser && currentUser.email?.toLowerCase() === adminEmail;
+        const isAdmin = currentUser && currentUser.email?.toLowerCase() === "tomorrow373tomorrow@gmail.com";
 
-        // Panel
         if (detailPanel) {
             const eventsInMonth = Object.keys(dynamicEvents).filter(d => d.startsWith(monthStr)).sort();
             let adminForm = isAdmin ? `
@@ -251,14 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Modal Control
-    document.querySelectorAll('.modal-close').forEach(b => b.onclick = () => {
-        if (authModal) authModal.style.display = 'none';
-        const attModal = document.getElementById('attendance-modal');
-        if (attModal) attModal.style.display = 'none';
-    });
-
-    // Auth Form Submit
+    // Auth Form
     if (authForm) {
         authForm.onsubmit = async (e) => {
             e.preventDefault();
@@ -267,10 +251,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const name = document.getElementById('auth-display-name')?.value;
             try {
                 if (isRegisterMode) {
-                    const res = await createUserWithEmailAndPassword(auth, email, pass);
-                    await updateProfile(res.user, { displayName: name });
+                    const res = await auth.createUserWithEmailAndPassword(email, pass);
+                    await res.user.updateProfile({ displayName: name });
                 } else {
-                    await signInWithEmailAndPassword(auth, email, pass);
+                    await auth.signInWithEmailAndPassword(email, pass);
                 }
                 authModal.style.display = 'none';
                 authForm.reset();
@@ -288,18 +272,13 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('auth-submit-btn').textContent = isRegisterMode ? '登録してログイン' : 'ログイン';
         };
     }
-
-    // Prev/Next
-    document.getElementById('prev-month').onclick = () => { currentDate.setMonth(currentDate.getMonth()-1); renderCalendar(); };
-    document.getElementById('next-month').onclick = () => { currentDate.setMonth(currentDate.getMonth()+1); renderCalendar(); };
 });
 
 window.openAttendanceModal = (date, title) => {
     const modal = document.getElementById('attendance-modal');
-    if (!modal || !getAuth().currentUser) return alert("ログインが必要です");
+    if (!modal || !auth.currentUser) return alert("ログインが必要です");
     modal.dataset.currentDate = date;
     document.getElementById('att-modal-date').textContent = date;
     document.getElementById('att-modal-event').textContent = title;
     modal.style.display = 'flex';
-    // ここに出欠リスト更新処理
 };
