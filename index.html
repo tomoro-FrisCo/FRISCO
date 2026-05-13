@@ -15,7 +15,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     
     <script>
-        // Firebase Config (Correct Values)
+        // Firebase Config (Exact values from firebase-config.js)
         const firebaseConfig = {
             apiKey: "AIzaSyCM9hJ69HpvV_gCdapm2UmkxrumeNsJhgw",
             authDomain: "frisco-web.firebaseapp.com",
@@ -29,7 +29,7 @@
         firebase.initializeApp(firebaseConfig);
         window.db = firebase.firestore();
         window.auth = firebase.auth();
-        console.log("Firebase Ready in HTML");
+        console.log("Firebase initialized");
     </script>
 
     <link rel="stylesheet" href="style.css">
