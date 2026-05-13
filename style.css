@@ -1063,34 +1063,26 @@ ul, ol {
 
 /* --- Animations (Intersection Observer targets) --- */
 .fade-in {
-    opacity: 0;
+    opacity: 1; /* 最初から見えるように変更 */
     transition: opacity 0.8s ease, transform 0.8s ease;
-    animation: forceShow 0.1s forwards;
-    animation-delay: 2s; /* JSが動かなければ2秒後に強制表示 */
 }
 
 .fade-in-up {
-    opacity: 0;
-    transform: translateY(40px);
+    opacity: 1;
+    transform: translateY(0);
     transition: opacity 0.8s ease, transform 0.8s ease;
-    animation: forceShow 0.1s forwards;
-    animation-delay: 2s;
 }
 
 .fade-in-left {
-    opacity: 0;
-    transform: translateX(-40px);
+    opacity: 1;
+    transform: translateX(0);
     transition: opacity 0.8s ease, transform 0.8s ease;
-    animation: forceShow 0.1s forwards;
-    animation-delay: 2s;
 }
 
 .fade-in-right {
-    opacity: 0;
-    transform: translateX(40px);
+    opacity: 1;
+    transform: translateX(0);
     transition: opacity 0.8s ease, transform 0.8s ease;
-    animation: forceShow 0.1s forwards;
-    animation-delay: 2s;
 }
 
 .visible {
