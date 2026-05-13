@@ -46,11 +46,15 @@
                 <h1 class="hero-title-large">FrisCo.</h1>
                 <p class="hero-subtitle-large" style="color: var(--color-navy) !important;">MEIJI GAKUIN UNIV.</p>
                 
-                <div style="margin-top: 30px;">
-                    <a href="wishlist.html" class="btn" style="background: var(--color-navy); color: white; padding: 12px 30px; font-size: 0.8rem; letter-spacing: 2px; font-weight: 800; border-radius: 5px;">WISH LIST</a>
+                <div id="hero-action-buttons" style="margin-top: 40px; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 0 20px;">
+                    <a href="#join" class="btn" style="background: var(--color-navy); color: white; padding: 14px 30px; font-size: 0.85rem; font-weight: 800; border-radius: 5px; min-width: 140px;">JOIN US</a>
+                    <a href="wishlist.html" class="btn" style="background: var(--color-accent); color: var(--color-navy); padding: 14px 30px; font-size: 0.85rem; font-weight: 800; border-radius: 5px; min-width: 140px;">WISH LIST</a>
+                    <div id="hero-login-container">
+                        <button onclick="window.openAuthModal()" class="btn" style="background: white; color: var(--color-navy); border: 2px solid var(--color-navy); padding: 12px 30px; font-size: 0.85rem; font-weight: 800; border-radius: 5px; min-width: 140px; height: 100%;">LOGIN</button>
+                    </div>
                 </div>
 
-                <div id="hero-user-display" style="margin-top: 20px; font-weight: bold; color: var(--color-navy); font-size: 1.2rem; min-height: 1.5em; opacity: 0.8;"></div>
+                <div id="hero-user-display" style="margin-top: 30px; font-weight: 800; color: var(--color-navy); font-size: 1.8rem; min-height: 1.5em; letter-spacing: -1px;"></div>
             </div>
         </section>
 
