@@ -2,14 +2,15 @@
  * FrisCo Official Site - Ultra Stable Version (Compat Mode)
  */
 
-// --- Firebase Config (Using local file via window or re-defined here for safety) ---
+// --- Firebase Config (Correct Values) ---
 const firebaseConfig = {
-    apiKey: "AIzaSyDE_some_key", // 実際の設定に置き換わる前提
-    authDomain: "frisco-明治学院大学.firebaseapp.com",
-    projectId: "frisco-明治学院大学",
-    storageBucket: "frisco-明治学院大学.appspot.com",
-    messagingSenderId: "367306236968",
-    appId: "1:367306236968:web:7f6f571344400490f2305c"
+    apiKey: "AIzaSyCM9hJ69HpvV_gCdapm2UmkxrumeNsJhgw",
+    authDomain: "frisco-web.firebaseapp.com",
+    projectId: "frisco-web",
+    storageBucket: "frisco-web.firebasestorage.app",
+    messagingSenderId: "1001144206780",
+    appId: "1:1001144206780:web:ca8e0a1e5cd792ee0057b9",
+    measurementId: "G-T534ZTPKYT"
 };
 
 // --- Initialization ---
