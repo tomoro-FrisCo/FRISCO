@@ -215,15 +215,17 @@ ul, ol {
         padding-top: 40px !important;
     }
     .hero-content div[style*="display: flex"] {
-        flex-direction: column !important;
-        align-items: center !important;
-        gap: 10px !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+        gap: 8px !important;
+        padding: 0 10px !important;
     }
     .hero-content .btn-large {
-        width: 100% !important;
-        max-width: 260px !important;
-        padding: 12px 15px !important;
-        font-size: 0.8rem !important;
+        flex: 1 1 130px !important;
+        max-width: 150px !important;
+        padding: 10px 5px !important;
+        font-size: 0.75rem !important;
     }
 }
 
@@ -237,48 +239,61 @@ ul, ol {
     transition: var(--transition-normal);
 }
 
-@media (max-width: 768px) {
+.nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 300px;
+    height: 100vh;
+    background: var(--color-bg-main);
+    transition: var(--transition-normal);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+}
+
+.nav.active {
+    right: 0;
+}
+
+.nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    text-align: center;
+}
+
+.nav-list a {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-navy);
+}
+
+.menu-toggle {
+    display: block !important;
+    margin-left: 10px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10001;
+    width: 30px;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 25px;
+    height: 2px;
+    background: var(--color-navy);
+    margin: 5px auto;
+    transition: var(--transition-normal);
+}
+
+@media (max-width: 480px) {
     .nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
         width: 80%;
-        height: 100vh;
-        background: var(--color-bg-main);
-        transition: var(--transition-normal);
-        z-index: 999;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
-    }
-
-    .nav.active {
-        right: 0;
-    }
-
-    .nav-list {
-        flex-direction: column;
-        gap: 40px;
-        text-align: center;
-    }
-
-    .nav-list a {
-        font-size: 1.5rem;
-    }
-
-    .menu-toggle {
-        display: block !important;
-        margin-left: 10px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        z-index: 1001;
-    }
-    
-    .menu-toggle span {
-        background: var(--color-navy); /* ハンバーガーを紺色に */
     }
 }
 
