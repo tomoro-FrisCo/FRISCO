@@ -39,13 +39,14 @@ async function deleteEvent(date) {
  * --- Global Functions ---
  */
 window.openAuthModal = () => {
+    console.log("Opening Auth Modal...");
     const modal = document.getElementById('auth-modal');
     if (modal) {
         modal.style.display = 'flex';
-        setTimeout(() => {
-            const emailInput = document.getElementById('auth-email');
-            if (emailInput) emailInput.focus();
-        }, 100);
+        const emailInput = document.getElementById('auth-email');
+        if (emailInput) setTimeout(() => emailInput.focus(), 100);
+    } else {
+        console.error("Auth modal not found");
     }
 };
 
@@ -127,6 +128,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const calendarGrid = document.getElementById('calendar-grid');
     const monthYearDisplay = document.getElementById('month-year');
     const detailPanel = document.getElementById('calendar-detail-panel');
+
+    // --- Login Button Bindings ---
+    const heroLoginBtn = document.getElementById('hero-login-btn');
+    if (heroLoginBtn) {
+        heroLoginBtn.onclick = (e) => {
+            e.preventDefault();
+            window.openAuthModal();
+        };
+    }
 
     // --- Header & Scroll ---
     const header = document.querySelector('.header');
