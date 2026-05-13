@@ -147,6 +147,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateUIForUser(user) {
         const adminEmail = "tomorrow373tomorrow@gmail.com".toLowerCase();
         const isAdmin = user && user.email && user.email.toLowerCase() === adminEmail;
+        const heroLoginContainer = document.getElementById('hero-login-container');
+        const heroUserDisplay = document.getElementById('hero-user-display');
 
         if (user) {
             navAuthItem.innerHTML = `
@@ -156,6 +158,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             document.getElementById('nav-logout-btn').onclick = logoutUser;
+            
+            // バナーのボタン制御
+            if (heroLoginContainer) heroLoginContainer.style.display = 'none';
+            if (heroUserDisplay) heroUserDisplay.innerHTML = `🌟 ${user.displayName}さん、こんにちは！`;
 
             // Wish List Form
             const wishFormContainer = document.getElementById('wish-form-container');
@@ -183,6 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             navAuthItem.innerHTML = `<button onclick="window.openAuthModal()" class="btn" style="background:var(--color-navy); color:white; padding:8px 15px; font-size:0.75rem;">LOGIN</button>`;
+            
+            // バナーの表示リセット
+            if (heroLoginContainer) heroLoginContainer.style.display = 'block';
+            if (heroUserDisplay) heroUserDisplay.innerHTML = '';
+
             const wishFormContainer = document.getElementById('wish-form-container');
             if (wishFormContainer) {
                 wishFormContainer.innerHTML = `<div class="glass-panel" style="padding:30px; text-align:center;"><p style="margin-bottom:15px;">投稿するにはログインが必要です</p><button class="btn btn-primary" onclick="window.openAuthModal()">ログインする</button></div>`;
