@@ -1,6 +1,7 @@
 import { registerUser, loginUser, logoutUser, observeAuthState } from "./auth.js";
 import { setAttendance, removeAttendance, subscribeToAttendance } from "./attendance.js";
 import { addWish, subscribeToWishes, deleteWish } from "./wishlist.js";
+import { subscribeToEvents, saveEvent, deleteEvent } from "./events.js";
 
 /**
  * --- Global Functions ---
@@ -13,6 +14,34 @@ window.openAuthModal = () => {
             const emailInput = document.getElementById('auth-email');
             if (emailInput) emailInput.focus();
         }, 100);
+    }
+};
+
+// 管理者用：予定を削除
+window.handleDeleteEvent = async (date) => {
+    if (!confirm(`${date} の予定を削除しますか？`)) return;
+    const res = await deleteEvent(date);
+    if (!res.success) alert("削除に失敗しました: " + res.error);
+};
+
+// 管理者用：予定を追加
+window.handleAddEvent = async () => {
+    const dateInput = document.getElementById('admin-event-date');
+    const titleInput = document.getElementById('admin-event-title');
+    const date = dateInput.value;
+    const title = titleInput.value.trim();
+
+    if (!date || !title) {
+        alert("日付と内容を入力してください");
+        return;
+    }
+
+    const res = await saveEvent(date, title);
+    if (res.success) {
+        titleInput.value = '';
+        alert("予定を保存しました");
+    } else {
+        alert("保存に失敗しました: " + res.error);
     }
 };
 
@@ -47,7 +76,9 @@ window.clearAllWishes = async () => {
 document.addEventListener('DOMContentLoaded', () => {
     let currentUser = null;
     let currentAttendanceData = {};
+    let dynamicEvents = {}; // Firestoreから取得した予定
     let unsubscribeAttendance = null;
+    let unsubscribeEvents = null;
     let isRegisterMode = false;
     let currentDate = new Date();
 
@@ -163,6 +194,14 @@ document.addEventListener('DOMContentLoaded', () => {
             if (heroLoginContainer) heroLoginContainer.style.display = 'none';
             if (heroUserDisplay) heroUserDisplay.innerHTML = `🌟 ${user.displayName}さん、こんにちは！`;
 
+            // 予定購読の開始（初回のみ、またはログイン後）
+            if (!unsubscribeEvents) {
+                unsubscribeEvents = subscribeToEvents((events) => {
+                    dynamicEvents = events;
+                    renderCalendar(currentDate);
+                });
+            }
+
             // Wish List Form
             const wishFormContainer = document.getElementById('wish-form-container');
             if (wishFormContainer) {
@@ -193,6 +232,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // バナーの表示リセット
             if (heroLoginContainer) heroLoginContainer.style.display = 'block';
             if (heroUserDisplay) heroUserDisplay.innerHTML = '';
+
+            // ログアウト時は購読停止（オプション：閲覧のみ許可なら停止しない）
+            // 今回は全ユーザー閲覧可能にするので、購読は継続させます
+            if (!unsubscribeEvents) {
+                unsubscribeEvents = subscribeToEvents((events) => {
+                    dynamicEvents = events;
+                    renderCalendar(currentDate);
+                });
+            }
 
             const wishFormContainer = document.getElementById('wish-form-container');
             if (wishFormContainer) {
@@ -226,18 +274,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Calendar Logic (省略せずに確実に動作するように保持) ---
-    const fixedEvents = {
-        "2025-05-13": "14時～16時 白金体育館", "2025-05-21": "戸塚キャンパス練習", "2025-05-27": "14時～16時 白金体育館",
-        "2025-06-01": "13:35～15:35 白金体育館", "2025-06-17": "16:00～18:00 金井公園多目的運動場(戸塚)", "2025-06-25": "13:35～15:35 白金体育館", "2025-06-27": "15:00～17:00 早稲田合同練習(場所未定)⭐️",
-        "2026-05-13": "14時～16時 白金体育館", "2026-05-21": "戸塚キャンパス練習", "2026-05-27": "14時～16時 白金体育館",
-        "2026-06-01": "13:35～15:35 白金体育館", "2026-06-17": "16:00～18:00 金井公園多目的運動場(戸塚)", "2026-06-25": "13:35～15:35 白金体育館", "2026-06-27": "15:00～17:00 早稲田合同練習(場所未定)⭐️"
-    };
-
+    // --- Calendar Logic ---
     function renderCalendar(date) {
         if (!calendarGrid) return;
-        const monthStr = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}`;
-        monthYearDisplay.textContent = `${date.getFullYear()}.${String(date.getMonth()+1).padStart(2,'0')}`;
+        const year = date.getFullYear();
+        const month = date.getMonth();
+        const monthStr = `${year}-${String(month+1).padStart(2,'0')}`;
+        monthYearDisplay.textContent = `${year}.${String(month+1).padStart(2,'0')}`;
+        
         if (unsubscribeAttendance) unsubscribeAttendance();
         unsubscribeAttendance = subscribeToAttendance(monthStr, (data) => {
             currentAttendanceData = data;
@@ -252,27 +296,57 @@ document.addEventListener('DOMContentLoaded', () => {
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
         const monthStr = `${year}-${String(month+1).padStart(2,'0')}`;
+        const adminEmail = "tomorrow373tomorrow@gmail.com".toLowerCase();
+        const isAdmin = currentUser && currentUser.email && currentUser.email.toLowerCase() === adminEmail;
 
-        // Panel Update
-        const eventsInMonth = Object.keys(fixedEvents).filter(d => d.startsWith(monthStr)).sort();
+        // Panel Update (Firestoreの予定を表示)
+        const eventsInMonth = Object.keys(dynamicEvents).filter(d => d.startsWith(monthStr)).sort();
         if (detailPanel) {
-            if (eventsInMonth.length > 0) {
-                detailPanel.innerHTML = `<h4 style="font-size:0.75rem; opacity:0.6; margin-bottom:15px;">SCHEDULE</h4><div class="monthly-event-list">${eventsInMonth.map(d => {
-                    const count = (currentAttendanceData[d] || []).filter(a => a.status === 'going').length;
-                    const names = (currentAttendanceData[d] || []).filter(a => a.status === 'going').map(a => a.userName).join(', ') || 'なし';
-                    return `<div class="monthly-event-item" onclick="window.openAttendanceModal('${d}', '${fixedEvents[d]}')"><div class="monthly-event-date">${d}</div><div class="monthly-event-title">${fixedEvents[d]}</div><div style="font-size:0.7rem; color:#3182ce; margin-top:4px;">👤 ${count}人参加 (${names})</div></div>`;
-                }).join('')}</div>`;
+            let adminForm = isAdmin ? `
+                <div class="admin-event-form" style="background: white; padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 2px solid var(--color-accent);">
+                    <p style="font-size: 0.7rem; font-weight: 800; margin-bottom: 10px;">【管理者】予定を追加</p>
+                    <input type="date" id="admin-event-date" style="width: 100%; padding: 5px; margin-bottom: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <input type="text" id="admin-event-title" placeholder="13:00~ 練習 @戸塚" style="width: 100%; padding: 5px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    <button onclick="window.handleAddEvent()" class="btn btn-primary" style="width: 100%; padding: 8px; font-size: 0.75rem;">カレンダーに追加</button>
+                </div>
+            ` : '';
+
+            if (eventsInMonth.length > 0 || isAdmin) {
+                detailPanel.innerHTML = `
+                    ${adminForm}
+                    <h4 style="font-size:0.75rem; opacity:0.6; margin-bottom:15px;">SCHEDULE</h4>
+                    <div class="monthly-event-list">
+                        ${eventsInMonth.map(d => {
+                            const count = (currentAttendanceData[d] || []).filter(a => a.status === 'going').length;
+                            const names = (currentAttendanceData[d] || []).filter(a => a.status === 'going').map(a => a.userName).join(', ') || 'なし';
+                            const delBtn = isAdmin ? `<button onclick="window.handleDeleteEvent('${d}')" style="background:none; border:none; color:#e53e3e; cursor:pointer; font-size:0.8rem; margin-left:10px;">🗑️</button>` : '';
+                            return `
+                                <div class="monthly-event-item" onclick="window.openAttendanceModal('${d}', '${dynamicEvents[d]}')">
+                                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                        <div>
+                                            <div class="monthly-event-date">${d}</div>
+                                            <div class="monthly-event-title">${dynamicEvents[d]}</div>
+                                        </div>
+                                        ${delBtn}
+                                    </div>
+                                    <div style="font-size:0.7rem; color:#3182ce; margin-top:4px;">👤 ${count}人参加 (${names})</div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                `;
             } else {
                 detailPanel.innerHTML = `<p style="text-align:center; padding:20px; opacity:0.5;">予定なし</p>`;
             }
         }
 
+        // Calendar Grid Update
         for (let i = 0; i < firstDay; i++) calendarGrid.appendChild(document.createElement('div'));
         for (let d = 1; d <= lastDate; d++) {
             const dayEl = document.createElement('div');
             dayEl.className = 'cal-day';
             const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-            const event = fixedEvents[dateStr];
+            const event = dynamicEvents[dateStr];
             const hasDB = (currentAttendanceData[dateStr] || []).length > 0;
             const dayOfWeek = new Date(year, month, d).getDay();
             let dayClass = dayOfWeek === 0 ? 'sunday' : (dayOfWeek === 6 ? 'saturday' : '');
