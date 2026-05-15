@@ -113,39 +113,46 @@ function startApp() {
         // Details & Admin (PC: Right, Mobile: Bottom)
         const events = Object.keys(dynamicEvents).filter(d => d.startsWith(monthStr)).sort();
         let html = `
-            <div style="display:flex; flex-direction:column; gap:25px;">
+            <div style="display:flex; flex-direction:column; gap:30px;">
                 <div id="schedule-list">
-                    <h4 style="font-size:0.7rem; opacity:0.6; margin-bottom:15px; letter-spacing:2px; color:var(--color-navy);">SCHEDULE & MEMBERS</h4>
+                    <h4 style="font-size:0.8rem; opacity:0.6; margin-bottom:20px; letter-spacing:3px; color:var(--color-navy); font-weight:800;">SCHEDULE & MEMBERS</h4>
                     ${events.length > 0 ? events.map(d => {
                         const going = (currentAttendanceData[d] || []).filter(a => a.status === 'going');
-                        const names = going.map(a => a.userName).join('、 ') || '参加予定なし';
+                        const names = going.map(a => a.userName).join('、 ') || 'まだ参加予定者はいません';
                         const title = dynamicEvents[d];
                         return `
-                            <div style="background:white; border-radius:12px; padding:15px; margin-bottom:15px; box-shadow:0 2px 10px rgba(0,0,0,0.05); border:1px solid rgba(0,0,0,0.05);">
+                            <div class="schedule-card">
                                 <div onclick="window.openAttendanceModal('${d}', '${title}')" style="cursor:pointer;">
-                                    <div style="color:var(--color-accent); font-weight:800; font-size:0.7rem; margin-bottom:5px;">${d}</div>
-                                    <div style="font-weight:700; color:var(--color-navy); font-size:0.95rem; margin-bottom:8px;">${title}</div>
-                                    <div style="background:#f0f7ff; padding:10px; border-radius:8px;">
-                                        <div style="font-size:0.7rem; color:#3182ce; font-weight:800; margin-bottom:4px;">👤 参加予定 (${going.length}人)</div>
-                                        <div style="font-size:0.75rem; color:#555; line-height:1.5;">${names}</div>
+                                    <div class="schedule-card-date">${d}</div>
+                                    <div class="schedule-card-title">${title}</div>
+                                    <div class="schedule-card-members">
+                                        <div class="schedule-card-members-title">👤 参加予定 (${going.length}人)</div>
+                                        <div class="schedule-card-members-list">${names}</div>
                                     </div>
                                 </div>
                                 ${isAdmin ? `
-                                    <div style="display:flex; gap:10px; margin-top:12px; border-top:1px solid #eee; padding-top:10px;">
-                                        <button onclick="window.editEvent('${d}', '${title}')" style="background:var(--color-navy); color:white; font-size:0.65rem; padding:5px 10px; border:none; border-radius:4px; cursor:pointer;">✏️ 編集</button>
-                                        <button onclick="window.handleDeleteEvent('${d}')" style="background:#e53e3e; color:white; font-size:0.65rem; padding:5px 10px; border:none; border-radius:4px; cursor:pointer;">🗑️ 削除</button>
+                                    <div class="admin-action-bar">
+                                        <button onclick="window.editEvent('${d}', '${title}')" style="background:var(--color-navy); color:white; font-size:0.75rem; font-weight:800; padding:8px 15px; border:none; border-radius:6px; cursor:pointer;">✏️ 編集</button>
+                                        <button onclick="window.handleDeleteEvent('${d}')" style="background:#e53e3e; color:white; font-size:0.75rem; font-weight:800; padding:8px 15px; border:none; border-radius:6px; cursor:pointer;">🗑️ 削除</button>
                                     </div>
                                 ` : ''}
                             </div>
                         `;
-                    }).join('') : '<p style="text-align:center; padding:40px; opacity:0.5;">今月の予定はありません</p>'}
+                    }).join('') : `
+                        <div style="text-align:center; padding:50px 20px; background:rgba(0,0,0,0.02); border-radius:15px; color:var(--color-navy); opacity:0.6;">
+                            <span style="font-size:2rem; display:block; margin-bottom:10px;">☕</span>
+                            <p style="font-size:0.9rem; font-weight:700;">今月の予定はありません</p>
+                        </div>
+                    `}
                 </div>
                 ${isAdmin ? `
-                    <div style="background:#fff; padding:20px; border-radius:15px; border:2px dashed var(--color-accent);">
-                        <p style="font-size:0.8rem; font-weight:800; margin-bottom:15px;">🛠️ 予定の追加・編集</p>
-                        <input type="date" id="admin-event-date" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
-                        <input type="text" id="admin-event-title" placeholder="内容を入力" style="width:100%; padding:10px; margin-bottom:10px; border:1px solid #ddd; border-radius:6px;">
-                        <button onclick="window.handleAddEvent()" class="btn btn-primary" style="width:100%; padding:12px; font-weight:800;">保存</button>
+                    <div class="admin-form-panel">
+                        <p style="font-size:0.9rem; font-weight:800; margin-bottom:20px; color:var(--color-navy); display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:1.2rem;">🛠️</span> 予定の追加・編集
+                        </p>
+                        <input type="date" id="admin-event-date" class="admin-input">
+                        <input type="text" id="admin-event-title" class="admin-input" placeholder="例：13:30〜 練習 @白金キャンパス">
+                        <button onclick="window.handleAddEvent()" class="btn btn-primary" style="width:100%; padding:14px; font-weight:800; font-size:0.9rem; border-radius:8px; margin-top:5px;">カレンダーに保存する</button>
                     </div>
                 ` : ''}
             </div>

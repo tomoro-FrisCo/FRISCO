@@ -1211,8 +1211,8 @@ ul, ol {
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 10px;
-    margin-top: 15px;
+    gap: 8px;
+    margin-top: 10px;
 }
 
 .cal-day {
@@ -1222,33 +1222,38 @@ ul, ol {
     align-items: center;
     justify-content: center;
     background: #fff;
-    border-radius: 12px;
-    font-size: 0.95rem;
-    font-weight: 700;
+    border-radius: 14px;
+    font-size: 1rem;
+    font-weight: 800;
     cursor: pointer;
-    border: 1px solid rgba(0,0,0,0.04);
-    transition: all 0.2s;
+    border: 1px solid rgba(0,0,0,0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
+    color: var(--color-navy);
 }
 
 .cal-day:hover {
     background: var(--color-bg-main);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-color: rgba(0,0,0,0.08);
 }
 
 .cal-day.has-events {
     background: #fff5f5;
+    border: 1px solid rgba(229, 62, 62, 0.15);
 }
 
 .cal-day.has-events .cal-day-num {
     background: #e53e3e;
     color: white !important;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(229, 62, 62, 0.3);
 }
 
 .cal-day.is-sunday {
@@ -1259,6 +1264,91 @@ ul, ol {
     background: transparent;
     border: none;
     cursor: default;
+}
+
+/* --- Right Panel Sleek UI --- */
+.schedule-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.schedule-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+}
+
+.schedule-card-date {
+    color: var(--color-accent);
+    font-weight: 900;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+}
+
+.schedule-card-title {
+    font-weight: 800;
+    color: var(--color-navy);
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+
+.schedule-card-members {
+    background: #f8fbff;
+    padding: 12px 15px;
+    border-radius: 10px;
+    border-left: 4px solid #3182ce;
+}
+
+.schedule-card-members-title {
+    font-size: 0.75rem;
+    color: #3182ce;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.schedule-card-members-list {
+    font-size: 0.85rem;
+    color: #4a5568;
+    line-height: 1.6;
+    font-weight: 500;
+}
+
+.admin-action-bar {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    border-top: 1px dashed rgba(0,0,0,0.1);
+    padding-top: 15px;
+}
+
+.admin-form-panel {
+    background: #fdfdfd;
+    padding: 25px;
+    border-radius: 16px;
+    border: 2px dashed rgba(212, 175, 55, 0.5); /* Accent color */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.admin-input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+.admin-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
 }
 
 /* モーダル背景 */
