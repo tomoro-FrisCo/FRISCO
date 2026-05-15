@@ -1178,289 +1178,117 @@ ul, ol {
 }
 
 /* --- Custom Calendar --- */
-/* --- Custom Calendar --- */
-.calendar-main {
-    border: 1px solid rgba(27, 54, 93, 0.1);
-    border-radius: 12px;
-    overflow: hidden;
-    background: #fdfcf9; /* より明るいクリーム色 */
-    box-shadow: var(--shadow-sm);
+/* --- Calendar Core Layout --- */
+.calendar-main-layout {
+    display: flex;
+    gap: 30px;
+    margin-top: 40px;
+    align-items: flex-start;
 }
 
-.calendar-weekdays {
+.calendar-column {
+    flex: 1.3;
+    min-width: 340px;
+}
+
+.detail-column {
+    flex: 1;
+    min-width: 320px;
+}
+
+/* スマホ対応：縦並びに切り替え */
+@media (max-width: 992px) {
+    .calendar-main-layout {
+        flex-direction: column;
+    }
+    .calendar-column, .detail-column {
+        width: 100%;
+        min-width: 0;
+        flex: none;
+    }
+}
+
+.calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    background: rgba(27, 54, 93, 0.02);
-    border-bottom: 1px solid rgba(27, 54, 93, 0.05);
-    color: var(--color-navy) !important;
-    font-weight: 800;
-    padding: 12px 0;
-    opacity: 1 !important;
-}
-
-.calendar-weekdays div:first-child {
-    color: #e53e3e !important; /* 日曜日（英字）を赤に */
-}
-
-.calendar-weekdays div:last-child {
-    color: #3182ce !important; /* 土曜日（英字）を青に（お好みで） */
-}
-
-.calendar-days {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 0 !important;
+    gap: 10px;
+    margin-top: 15px;
 }
 
 .cal-day {
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    position: relative;
-    cursor: pointer;
-    border: 0.5px solid rgba(27, 54, 93, 0.03);
-    background: #fdfcf9; /* 明るい背景 */
-}
-
-.cal-day.is-sunday .cal-day-num {
-    color: #e53e3e; /* 日曜日の数字を赤に */
-}
-
-.cal-day.empty {
-    background: rgba(0, 0, 0, 0.02); /* 空白セルを少し暗く */
-}
-
-/* 予定がある日の赤丸（よりお洒落な細いライン） */
-.cal-day.has-events::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 34px;
-    height: 34px;
-    border: 1.5px solid #e53e3e; 
-    border-radius: 50%;
-    z-index: 1;
-}
-
-.cal-day.selected {
-    background: rgba(212, 175, 55, 0.08);
-}
-
-.cal-day-num {
-    position: relative;
-    z-index: 2;
-    font-weight: 700;
+    background: #fff;
+    border-radius: 12px;
     font-size: 0.95rem;
-    color: var(--color-navy);
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: all 0.2s;
+    position: relative;
 }
 
-.cal-day.today .cal-day-num {
-    color: #e53e3e;
-    font-weight: 800;
-    text-decoration: underline;
-}
-
-/* モバイル対応：縦並びへの切り替え */
-@media (max-width: 992px) {
-    .calendar-layout {
-        grid-template-columns: 1fr !important; /* 縦並びに強制 */
-    }
-    
-    .calendar-detail-panel {
-        max-height: none !important; /* スマホではスクロールさせず、そのまま下に伸ばす */
-        margin-top: 20px;
-    }
-}
-
-.detail-event-item {
-    background: white;
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 20px;
-    border: 1px solid rgba(27, 54, 93, 0.08);
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.3s ease;
-}
-
-.detail-event-item:hover {
+.cal-day:hover {
+    background: var(--color-bg-main);
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
 }
 
-.active-absent {
-    background: #e53e3e !important;
-    color: white !important;
-    border-color: #e53e3e !important;
+.cal-day.has-events {
+    background: #fff5f5;
 }
 
-/* 予定がある日の赤い丸 */
 .cal-day.has-events .cal-day-num {
     background: #e53e3e;
     color: white !important;
-    border-radius: 50%;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto;
+    border-radius: 50%;
 }
 
-.calendar-detail-panel {
-    background: var(--color-bg-main);
-    padding: 25px;
-    border-radius: 15px;
-    border: 1px solid rgba(27, 54, 93, 0.1);
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-.monthly-event-item {
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(27, 54, 93, 0.1);
-    cursor: pointer;
-    transition: var(--transition-fast);
-}
-
-.monthly-event-item:last-child {
-    border-bottom: none;
-}
-
-.monthly-event-item:hover {
-    padding-left: 5px;
-    color: var(--color-accent);
-}
-
-.hero-title-large {
-    font-size: clamp(6rem, 15vw, 12rem); /* 画面幅に合わせて巨大化 */
-    font-family: var(--font-en);
-    font-weight: 900;
-    letter-spacing: -2px;
-    line-height: 0.9;
-    margin-bottom: 10px;
-    color: var(--color-navy);
-}
-
-.hero-subtitle-large {
-    font-size: clamp(1rem, 3vw, 1.8rem);
-    font-weight: 700;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: var(--color-navy-light);
-    opacity: 0.7;
-}
-
-.monthly-event-date {
-    font-size: 0.75rem;
-    font-family: var(--font-en);
-    font-weight: 800;
+.cal-day.is-sunday {
     color: #e53e3e;
-    margin-bottom: 2px;
 }
 
-.monthly-event-title {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--color-navy);
+.cal-day.empty {
+    background: transparent;
+    border: none;
+    cursor: default;
 }
-/* --- Modals --- */
+
+/* モーダル背景 */
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
-    z-index: 10000 !important; /* 最前面へ */
-    display: none; /* JSでflexに切り替え */
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: none;
     align-items: center;
     justify-content: center;
-    padding: 20px;
-    pointer-events: auto;
 }
 
 .modal-content {
-    width: 100%;
-    max-width: 450px;
-    position: relative;
-    padding: 40px;
-    background: white; /* 背景色を明示 */
+    background: white;
+    padding: 30px;
     border-radius: 20px;
-    z-index: 10001 !important;
-    pointer-events: auto;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes modalIn {
-    0% { opacity: 0; transform: scale(0.9); }
-    100% { opacity: 1; transform: scale(1); }
-}
-
-@media (max-width: 480px) {
-    .modal-content {
-        padding: 30px 20px;
-    }
+    width: 90%;
+    max-width: 400px;
+    position: relative;
 }
 
 .modal-close {
     position: absolute;
-    top: 20px;
+    top: 15px;
     right: 20px;
-    background: none;
-    border: none;
     font-size: 2rem;
-    color: var(--color-navy);
     cursor: pointer;
-    line-height: 1;
-}
-
-#auth-modal-title {
-    font-family: var(--font-en);
-    font-weight: 800;
-    font-size: 1.8rem;
-    color: var(--color-navy);
-    margin-bottom: 30px;
-    text-align: center;
-}
-
-#auth-form input {
-    width: 100%;
-    padding: 12px 15px;
-    margin-bottom: 15px;
-    border: 1px solid rgba(27, 54, 93, 0.2);
-    border-radius: 8px;
-    font-family: var(--font-ja);
-}
-
-.att-choice-btn.active-going {
-    background: #3182ce !important;
-    color: white !important;
-}
-
-.att-choice-btn.active-absent {
-    background: #e53e3e !important;
-    color: white !important;
-}
-
-.cal-day.has-events {
-    cursor: pointer;
-}
-
-.attendance-badge {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2px;
-    margin-top: auto;
-}
-
-.user-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-accent);
 }
