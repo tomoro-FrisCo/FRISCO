@@ -198,11 +198,29 @@ function startApp() {
             document.getElementById('auth-modal').style.display = 'none';
         } catch (e) { alert(e.message); }
     };
+
+    // --- Mobile Menu Toggle ---
+    const menuToggle = document.querySelector('.menu-toggle');
+    const nav = document.querySelector('.nav');
+    if (menuToggle && nav) {
+        menuToggle.onclick = () => {
+            menuToggle.classList.toggle('active');
+            nav.classList.toggle('active');
+        };
+        // リンクをクリックしたらメニューを閉じる
+        nav.querySelectorAll('a').forEach(link => {
+            link.onclick = () => {
+                menuToggle.classList.remove('active');
+                nav.classList.remove('active');
+            };
+        });
+    }
 }
 
 startApp();
 
 window.openAttendanceModal = (date, title) => {
+
     const modal = document.getElementById('attendance-modal');
     if (!modal || !window.auth.currentUser) return alert("ログインが必要です");
     modal.dataset.currentDate = date;
