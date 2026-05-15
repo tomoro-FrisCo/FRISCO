@@ -153,6 +153,11 @@ function startApp() {
                         <input type="date" id="admin-event-date" class="admin-input">
                         <input type="text" id="admin-event-title" class="admin-input" placeholder="例：13:30〜 練習 @白金キャンパス">
                         <button onclick="window.handleAddEvent()" class="btn btn-primary" style="width:100%; padding:14px; font-weight:800; font-size:0.9rem; border-radius:8px; margin-top:5px;">カレンダーに保存する</button>
+                        
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed rgba(0,0,0,0.1);">
+                            <p style="font-size:0.75rem; color:#888; margin-bottom:10px;">👇 AIが作成した6月の予定を一括追加します</p>
+                            <button onclick="window.addJuneEvents()" style="width:100%; padding:12px; background:#f0f7ff; color:#3182ce; border:1px solid #3182ce; border-radius:8px; font-weight:800; cursor:pointer;">✨ 6月の予定を一括追加する</button>
+                        </div>
                     </div>
                 ` : ''}
             </div>
@@ -160,11 +165,31 @@ function startApp() {
         detailPanel.innerHTML = html;
     }
 
+    // 6月の一括追加用関数
+    window.addJuneEvents = async () => {
+        if (!confirm("6月の指定された予定を4件一括で追加しますか？")) return;
+        const events = [
+            { date: "2026-06-01", title: "13:35～15:35 白金体育館" },
+            { date: "2026-06-17", title: "16:00～18:00 金井公園 多目的運動場（戸塚）" },
+            { date: "2026-06-25", title: "13:35～15:35 白金体育館" },
+            { date: "2026-06-27", title: "15:00～17:00 未定 (早稲田さんと合同練⭐️)" }
+        ];
+        try {
+            for (let e of events) {
+                await db.collection("events").doc(e.date).set(e);
+            }
+            alert("6月の予定を一括追加しました！カレンダーの月を切り替えてご確認ください。");
+        } catch (error) {
+            alert("エラー: " + error.message);
+        }
+    };
+
     document.getElementById('prev-month').onclick = () => { currentDate.setMonth(currentDate.getMonth()-1); draw(); };
     document.getElementById('next-month').onclick = () => { currentDate.setMonth(currentDate.getMonth()+1); draw(); };
     document.querySelectorAll('.modal-close').forEach(b => b.onclick = () => {
         document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
     });
+
 
     document.getElementById('auth-form').onsubmit = async (e) => {
         e.preventDefault();
