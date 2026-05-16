@@ -6,42 +6,129 @@
     <title>WISH LIST | FrisCo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800;900&family=Noto+Sans+JP:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCM9hJ69HpvV_gCdapm2UmkxrumeNsJhgw",
+            authDomain: "frisco-web.firebaseapp.com",
+            projectId: "frisco-web",
+            storageBucket: "frisco-web.firebasestorage.app",
+            messagingSenderId: "1001144206780",
+            appId: "1:1001144206780:web:ca8e0a1e5cd792ee0057b9"
+        };
+        firebase.initializeApp(firebaseConfig);
+        window.auth = firebase.auth();
+        window.db = firebase.firestore();
+    </script>
+
     <style>
         .wishlist-hero {
-            background: var(--color-navy);
+            background: linear-gradient(135deg, var(--color-navy) 0%, #2a4365 100%);
             color: white;
-            padding: 100px 20px 60px;
+            padding: 150px 20px 80px;
             text-align: center;
         }
-        .wishlist-container {
+        
+        .wish-container {
             max-width: 800px;
-            margin: -40px auto 60px;
+            margin: -40px auto 80px;
             padding: 0 20px;
             position: relative;
             z-index: 10;
         }
+
+        .wish-form-panel {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .wish-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: inherit;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            resize: none;
+        }
+
+        .wish-input:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+
+        .wish-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.04);
+            display: flex;
+            gap: 20px;
+            transition: transform 0.3s;
+        }
+
+        .wish-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        }
+
+        .wish-icon {
+            font-size: 2.5rem;
+            line-height: 1;
+        }
+
+        .wish-content {
+            flex: 1;
+        }
+
+        .wish-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--color-navy);
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .wish-meta {
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
     </style>
 </head>
-<body class="bg-light">
-    <!-- Navigation -->
-    <header class="header scrolled">
+<body id="top">
+    <!-- Header -->
+    <header class="header shadow-sm">
         <div class="header-inner">
-            <a href="index.html" class="logo" style="color: var(--color-navy) !important;">FrisCo</a>
+            <a href="index.html" class="logo">FrisCo</a>
             <div class="header-right">
-                <div id="nav-auth-item" style="display: flex; align-items: center;">
-                    <!-- Login status will be here -->
-                </div>
-                <button class="menu-toggle" aria-label="メニューを開く">
-                    <span></span><span></span><span></span>
-                </button>
+                <div id="nav-auth-item"></div>
+                <button class="menu-toggle"><span></span><span></span><span></span></button>
             </div>
             <nav class="nav">
                 <ul class="nav-list">
                     <li><a href="index.html">HOME</a></li>
-                    <li><a href="about.html">ABOUT US</a></li>
-                    <li><a href="wishlist.html" class="active">WISH LIST</a></li>
+                    <li><a href="about.html">ABOUT</a></li>
+                    <li><a href="wishlist.html" class="active" style="color:var(--color-accent)">WISH LIST</a></li>
                 </ul>
             </nav>
         </div>
@@ -49,19 +136,19 @@
 
     <main>
         <section class="wishlist-hero">
-            <h1 class="fade-in" style="font-size: 2.5rem; font-family: var(--font-en); font-weight: 800; letter-spacing: 2px;">WISH LIST</h1>
-            <p class="fade-in" style="opacity: 0.8; margin-top: 10px;">みんなの「やりたい！」を共有して、サークルをもっと楽しく。</p>
+            <h1 style="font-family: var(--font-en); font-weight: 900; font-size: clamp(2.5rem, 5vw, 4rem); letter-spacing: 2px; margin-bottom: 15px;">WISH LIST</h1>
+            <p style="font-size: 1.1rem; font-weight: 500; opacity: 0.9;">みんなの「やりたい！」を共有して、サークルをもっと楽しく。</p>
         </section>
 
-        <div class="wishlist-container">
-            <!-- 投稿フォーム -->
-            <div id="wish-form-container" class="fade-in-up" style="margin-bottom: 40px;">
-                <!-- JSで中身を制御 -->
+        <div class="wish-container">
+            <!-- 投稿フォームエリア -->
+            <div id="wish-form-area" class="wish-form-panel">
+                <div style="text-align: center; padding: 20px; opacity: 0.6;">読み込み中...</div>
             </div>
 
-            <!-- 投稿一覧 -->
-            <div id="wish-list-container" class="fade-in-up" style="display: grid; grid-template-columns: 1fr; gap: 20px;">
-                <!-- 投稿がここにカード形式で表示されます -->
+            <!-- ウィッシュリスト一覧 -->
+            <div id="wish-list-area">
+                <div style="text-align: center; padding: 40px; opacity: 0.5;">リストを取得しています...</div>
             </div>
         </div>
     </main>
@@ -69,30 +156,164 @@
     <footer class="footer">
         <div class="container text-center">
             <div class="footer-logo">FrisCo</div>
-            <p class="copyright">&copy; 2026 Meiji Gakuin University Ultimate Circle FrisCo.</p>
+            <p class="copyright">&copy; 2026 Meiji Gakuin Univ. Ultimate Circle FrisCo.</p>
         </div>
     </footer>
 
-    <!-- Modals -->
-    <div id="auth-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-content glass-panel shadow-lg">
+    <!-- Auth Modal -->
+    <div id="auth-modal" class="modal-overlay">
+        <div class="modal-content">
             <button class="modal-close">&times;</button>
-            <div id="auth-form-container">
-                <h3 id="auth-modal-title">LOGIN</h3>
-                <form id="auth-form">
-                    <div id="register-only-fields" style="display:none;">
-                        <input type="text" id="auth-display-name" placeholder="サークル内での名前（表示名）">
-                    </div>
-                    <input type="email" id="auth-email" placeholder="メールアドレス" required>
-                    <input type="password" id="auth-password" placeholder="パスワード" required>
-                    <button type="submit" id="auth-submit-btn" class="btn btn-primary btn-block mt-3">ログイン</button>
-                </form>
-                <p id="auth-switch-text" class="mt-3" style="font-size: 0.85rem;">アカウントをお持ちでないですか？ <a href="#" id="auth-switch-link" style="color: var(--color-accent); font-weight: bold;">新規登録</a></p>
-                <p id="auth-error-msg" style="color: #e53e3e; font-size: 0.8rem; margin-top: 10px; display: none;"></p>
-            </div>
+            <h3 style="text-align:center; font-family:var(--font-en); font-weight:900; font-size:1.8rem; color:var(--color-navy); margin-bottom:20px;">LOGIN</h3>
+            <form id="auth-form">
+                <input type="email" id="auth-email" placeholder="Email" required style="width:100%; padding:12px; margin-bottom:15px; border:1px solid #ddd; border-radius:8px;">
+                <input type="password" id="auth-password" placeholder="Password" required style="width:100%; padding:12px; margin-bottom:20px; border:1px solid #ddd; border-radius:8px;">
+                <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; font-weight:800; border-radius:8px;">ENTER</button>
+            </form>
         </div>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <script>
+        function startWishlistApp() {
+            const auth = window.auth;
+            const db = window.db;
+
+            if (!auth || !db) {
+                setTimeout(startWishlistApp, 100);
+                return;
+            }
+
+            let currentUser = null;
+            const formArea = document.getElementById('wish-form-area');
+            const listArea = document.getElementById('wish-list-area');
+            const navAuthItem = document.getElementById('nav-auth-item');
+
+            const icons = ['✨', '🔥', '🎉', '🌟', '💡', '🍔', '🚀'];
+
+            // 認証監視
+            auth.onAuthStateChanged(user => {
+                currentUser = user;
+                const name = user ? (user.displayName || user.email.split('@')[0]) : '';
+                
+                // ナビゲーション更新
+                if (navAuthItem) {
+                    navAuthItem.innerHTML = user 
+                        ? `<div style="display:flex;align-items:center;gap:10px;"><span style="font-size:0.7rem;font-weight:800;color:var(--color-navy);">👤 ${name}</span><button onclick="window.auth.signOut()" class="btn" style="background:var(--color-navy);color:white;padding:5px 10px;font-size:0.6rem;border-radius:4px;">LOGOUT</button></div>`
+                        : `<button onclick="document.getElementById('auth-modal').style.display='flex'" class="btn" style="background:var(--color-navy);color:white;padding:8px 15px;font-size:0.75rem;border-radius:4px;">LOGIN</button>`;
+                }
+
+                // フォーム表示更新
+                if (user) {
+                    formArea.innerHTML = `
+                        <h3 style="font-weight:800; color:var(--color-navy); margin-bottom:15px; font-size:1.2rem;">✨ 新しいウィッシュを追加</h3>
+                        <textarea id="wish-input-text" class="wish-input" rows="3" placeholder="例：みんなでBBQしたい！、新しいユニフォームを作りたい！"></textarea>
+                        <button onclick="submitWish()" class="btn btn-primary" style="width:100%; padding:14px; font-weight:800; border-radius:10px;">投稿する</button>
+                    `;
+                } else {
+                    formArea.innerHTML = `
+                        <div style="text-align:center; padding:20px;">
+                            <h3 style="font-weight:800; color:var(--color-navy); margin-bottom:15px;">ログインしてウィッシュを投稿</h3>
+                            <p style="font-size:0.9rem; color:#666; margin-bottom:20px;">サークルでやりたいことやアイデアを共有しましょう！</p>
+                            <button onclick="document.getElementById('auth-modal').style.display='flex'" class="btn btn-primary" style="padding:12px 30px; font-weight:800; border-radius:8px;">ログインする</button>
+                        </div>
+                    `;
+                }
+            });
+
+            // ウィッシュ投稿処理
+            window.submitWish = async () => {
+                const text = document.getElementById('wish-input-text').value.trim();
+                if (!text) return alert("内容を入力してください！");
+                if (!currentUser) return alert("ログインが必要です！");
+
+                try {
+                    await db.collection("wishlist").add({
+                        content: text,
+                        userId: currentUser.uid,
+                        userName: currentUser.displayName || currentUser.email.split('@')[0],
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    document.getElementById('wish-input-text').value = '';
+                } catch (e) {
+                    alert("エラー: " + e.message);
+                }
+            };
+
+            // ウィッシュ削除処理 (管理者 or 自分の投稿)
+            window.deleteWish = async (id) => {
+                if(confirm("このウィッシュを削除しますか？")) {
+                    try {
+                        await db.collection("wishlist").doc(id).delete();
+                    } catch (e) {
+                        alert("エラー: " + e.message);
+                    }
+                }
+            };
+
+            // データ監視と描画
+            db.collection("wishlist").orderBy("timestamp", "desc").onSnapshot(snapshot => {
+                if (snapshot.empty) {
+                    listArea.innerHTML = `
+                        <div style="text-align:center; padding:50px; background:white; border-radius:15px; border:1px dashed #ccc;">
+                            <span style="font-size:3rem; display:block; margin-bottom:10px;">🍃</span>
+                            <p style="font-weight:700; color:#888;">まだウィッシュがありません。<br>最初のアイデアを投稿してみよう！</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                snapshot.forEach((doc, index) => {
+                    const data = doc.data();
+                    const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleDateString('ja-JP') : 'ついさっき';
+                    const icon = icons[index % icons.length];
+                    const isAdmin = currentUser && currentUser.email?.toLowerCase() === "tomorrow373tomorrow@gmail.com";
+                    const isOwner = currentUser && currentUser.uid === data.userId;
+
+                    html += `
+                        <div class="wish-card">
+                            <div class="wish-icon">${icon}</div>
+                            <div class="wish-content">
+                                <div class="wish-text">${data.content}</div>
+                                <div class="wish-meta">
+                                    <span>👤 ${data.userName}</span>
+                                    <div style="display:flex; align-items:center; gap:15px;">
+                                        <span>🕒 ${date}</span>
+                                        ${(isAdmin || isOwner) ? `<button onclick="deleteWish('${doc.id}')" style="background:none; border:none; color:#e53e3e; font-size:0.75rem; font-weight:800; cursor:pointer; text-decoration:underline;">削除</button>` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                listArea.innerHTML = html;
+            });
+
+            // モーダル処理
+            document.getElementById('auth-form').onsubmit = async (e) => {
+                e.preventDefault();
+                try {
+                    await auth.signInWithEmailAndPassword(document.getElementById('auth-email').value, document.getElementById('auth-password').value);
+                    document.getElementById('auth-modal').style.display = 'none';
+                } catch (e) { alert(e.message); }
+            };
+
+            document.querySelectorAll('.modal-close').forEach(btn => {
+                btn.onclick = () => document.getElementById('auth-modal').style.display = 'none';
+            });
+
+            // モバイルメニュー
+            const menuToggle = document.querySelector('.menu-toggle');
+            const nav = document.querySelector('.nav');
+            if (menuToggle && nav) {
+                menuToggle.onclick = () => {
+                    menuToggle.classList.toggle('active');
+                    nav.classList.toggle('active');
+                };
+            }
+        }
+
+        startWishlistApp();
+    </script>
 </body>
 </html>
