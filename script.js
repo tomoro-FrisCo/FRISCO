@@ -208,12 +208,12 @@ function startApp() {
             menuToggle.classList.toggle('active');
             nav.classList.toggle('active');
         };
-        // リンクをクリックしたらメニューを閉じる
+        // リンクをクリックしたらメニューを閉じる（遷移はブロックしない）
         nav.querySelectorAll('a').forEach(link => {
-            link.onclick = () => {
+            link.addEventListener('click', () => {
                 menuToggle.classList.remove('active');
                 nav.classList.remove('active');
-            };
+            });
         });
     }
 }

@@ -1150,10 +1150,18 @@ ul, ol {
         padding: 100px 40px;
         transition: right 0.4s ease;
         box-shadow: -5px 0 20px rgba(0,0,0,0.5);
+        z-index: 9999;
     }
     
     .nav.active {
         right: 0;
+        pointer-events: auto;
+    }
+    
+    .nav-list a {
+        pointer-events: auto;
+        display: block;
+        padding: 8px 0;
     }
     
     .nav-list {
