@@ -43,6 +43,7 @@
 html {
     scroll-behavior: smooth;
     font-size: 16px;
+    overflow-x: hidden;
 }
 
 body {
@@ -51,6 +52,9 @@ body {
     background-color: var(--color-bg-main);
     line-height: 1.6;
     overflow-x: hidden;
+    width: 100%;
+    word-break: auto-phrase; /* Modern Japanese wrapping */
+    overflow-wrap: break-word;
 }
 
 h1, h2, h3, h4, h5, h6 {
