@@ -6,16 +6,182 @@
     <title>ABOUT US | FrisCo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800;900&family=Noto+Sans+JP:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyCM9hJ69HpvV_gCdapm2UmkxrumeNsJhgw",
+            authDomain: "frisco-web.firebaseapp.com",
+            projectId: "frisco-web",
+            storageBucket: "frisco-web.firebasestorage.app",
+            messagingSenderId: "1001144206780",
+            appId: "1:1001144206780:web:ca8e0a1e5cd792ee0057b9",
+            measurementId: "G-T534ZTPKYT"
+        };
+        firebase.initializeApp(firebaseConfig);
+        window.auth = firebase.auth();
+        window.db = firebase.firestore();
+    </script>
+    
+    <style>
+        .about-hero {
+            background: linear-gradient(135deg, rgba(27, 54, 93, 0.05) 0%, rgba(212, 175, 55, 0.05) 100%);
+            padding: 150px 0 80px;
+            text-align: center;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.03);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--color-accent);
+            font-family: var(--font-en);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            background: var(--color-navy);
+            opacity: 0.1;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -2px;
+            border-radius: 2px;
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            background: inherit;
+            width: 50%;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            right: -8px;
+            background: var(--color-accent);
+            border: 4px solid white;
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .left { left: 0; text-align: right; }
+        .right { left: 50%; text-align: left; }
+        .right::after { left: -8px; }
+        
+        .timeline-content {
+            padding: 20px 30px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.03);
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .timeline-month {
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: var(--color-navy);
+            margin-bottom: 5px;
+            font-family: var(--font-en);
+        }
+        
+        @media (max-width: 768px) {
+            .timeline::after { left: 31px; }
+            .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; text-align: left; }
+            .timeline-item::after { left: 23px; }
+            .left::after, .right::after { left: 23px; }
+            .right { left: 0; }
+        }
+        
+        .faq-item {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        
+        .faq-q {
+            font-weight: 800;
+            color: var(--color-navy);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .faq-a {
+            color: #555;
+            line-height: 1.6;
+            padding-left: 33px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature-list li {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.03);
+            font-weight: 700;
+            color: var(--color-navy);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+    </style>
 </head>
-<body class="bg-light">
+<body id="top">
     <!-- Header -->
-    <header class="header scrolled">
+    <header class="header shadow-sm">
         <div class="header-inner">
             <a href="index.html" class="logo">FrisCo</a>
             <div class="header-right">
-                <div id="nav-auth-item" style="display: flex; align-items: center;"></div>
+                <div id="nav-auth-item"></div>
                 <button class="menu-toggle" aria-label="メニューを開く">
                     <span></span><span></span><span></span>
                 </button>
@@ -23,79 +189,284 @@
             <nav class="nav">
                 <ul class="nav-list">
                     <li><a href="index.html">HOME</a></li>
-                    <li><a href="about.html" class="active">ABOUT US</a></li>
-                    <li><a href="wishlist.html">WISH LIST</a></li>
+                    <li><a href="about.html" class="active" style="color:var(--color-accent)">ABOUT</a></li>
+                    <li><a href="wishlist.html?v=2">WISH LIST</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main style="padding-top: 120px;">
-        <!-- Representative Message -->
+    <main>
+        <!-- Hero Section -->
+        <!-- Hero Section -->
+        <section class="about-hero">
+            <div class="container">
+                <h1 style="font-family: var(--font-en); font-weight: 900; font-size: clamp(2.5rem, 5vw, 4rem); color: var(--color-navy); margin-bottom: 20px;">What is FrisCo?</h1>
+                <p style="font-size: 1.2rem; font-weight: 800; color: var(--color-accent); letter-spacing: 2px; margin-bottom: 30px;">FrisCo（Frisbee Connect）とは？</p>
+                
+                <div style="max-width: 800px; margin: 0 auto; background: white; padding: clamp(20px, 5vw, 40px); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); text-align: center;">
+                    <p style="font-size: 1.1rem; line-height: 1.8; font-weight: 700; color: var(--color-navy); margin-bottom: 20px;">
+                        FrisCoは、「Frisbee」と「Connect」を組み合わせた名前のアルティメットサークルです！
+                        <span style="color: var(--color-accent); display: block; margin-top: 5px;">“フリスビーを通して人と人を繋げたい”</span>という思いから生まれました。
+                    </p>
+                    <p style="font-size: 1rem; line-height: 1.8; color: #555;">
+                        さらに、FrisCoは創部してまだ1年経っていない新しい団体！
+                        今まさに、私たちが歴史を作っている最中です！
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="section" style="background: var(--color-bg-main);">
+            <div class="container">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px;">
+                    <div class="stat-card">
+                        <div class="stat-number">40<span style="font-size: 1.2rem; color: #888;">人</span></div>
+                        <h3 style="font-weight: 800; color: var(--color-navy); margin-bottom: 10px;">部員数</h3>
+                        <p style="font-size: 0.85rem; color: #666; line-height: 1.5;">4年:15人 / 3年:5人<br>2年:3人 / 1年:15人<br>まだまだ増加中！</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">1:1</div>
+                        <h3 style="font-weight: 800; color: var(--color-navy); margin-bottom: 10px;">男女比</h3>
+                        <p style="font-size: 0.85rem; color: #666; line-height: 1.5;">男子も女子も関係なく<br>みんなで楽しく<br>活動しています！</p>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100<span style="font-size: 1.2rem; color: #888;">%</span></div>
+                        <h3 style="font-weight: 800; color: var(--color-navy); margin-bottom: 10px;">初心者率</h3>
+                        <p style="font-size: 0.85rem; color: #666; line-height: 1.5;">大学から始めた人ばかり！<br>未経験でも安心。<br>先輩が優しく教えます！</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIBES & Concept -->
         <section class="section">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title" style="font-family: var(--font-en); font-weight: 900;">MESSAGE</h2>
-                    <p class="section-subtitle">代表メッセージ</p>
+                    <h2 class="section-title">VIBES</h2>
+                    <p class="section-subtitle">サークルの雰囲気</p>
                 </div>
-                <div class="glass-panel" style="margin-top: 50px; display: grid; grid-template-columns: 1fr 2fr; gap: 40px; align-items: center;">
-                    <div style="text-align: center;">
-                        <div style="width: 150px; height: 150px; background: var(--color-navy); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem;">👤</div>
-                        <p style="font-weight: 800; color: var(--color-navy);">代表：松本</p>
-                    </div>
+                <div style="text-align: center; max-width: 800px; margin: 40px auto 0;">
+                    <h3 style="font-size: 1.5rem; font-weight: 900; color: var(--color-navy); margin-bottom: 20px;">
+                        「ゆるく楽しく」 × 「しっかり活動」
+                    </h3>
+                    <p style="line-height: 1.8; font-size: 1rem; color: #444; margin-bottom: 30px;">
+                        楽しむ時は全力で楽しみつつ、練習や試合では真面目に取り組みます！
+                        <span style="font-weight: 800; color: var(--color-accent); display: block; margin: 10px 0;">“ガチすぎる部活は怖いけど、ちゃんとスポーツはしたい”</span>という人にぴったり！
+                        活動後にみんなでご飯に行くこともあります！
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- What is Ultimate -->
+        <section class="section" style="background: var(--color-navy); color: white;">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title" style="color: white;">ABOUT ULTIMATE</h2>
+                    <p class="section-subtitle" style="color: rgba(255,255,255,0.7);">アルティメットってどんなスポーツ？</p>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; margin-top: 50px; align-items: stretch;">
                     <div>
-                        <h3 style="font-size: 1.5rem; color: var(--color-navy); margin-bottom: 20px; font-weight: 800;">「遊び」を「本気」に変える。</h3>
-                        <p style="line-height: 1.8;">FrisCoは、明治学院大学公認のアルティメットサークルです。「遊びを本気に、最高の仲間と。」をスローガンに、日々の練習に取り組んでいます。アルティメットは大学から始める人がほとんどで、全員が同じスタートラインから成長できる魅力的なスポーツです。最高の仲間と一緒に、新しい挑戦をしてみませんか？</p>
+                        <h3 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 20px; color: var(--color-accent);">フリスビー版アメフト！</h3>
+                        <p style="line-height: 1.8; font-size: 1rem; margin-bottom: 20px; opacity: 0.9;">
+                            アルティメットは、フリスビーを使って行うチームスポーツです。初心者でも始めやすく、運動神経だけで決まらないのが最大の魅力です！
+                        </p>
+                        <ul style="list-style: none; padding: 0; font-weight: 700; line-height: 2;">
+                            <li>🥏 フリスビーを持ったまま走れない</li>
+                            <li>🏃‍♂️ パスを繋いで前に進む</li>
+                            <li>🎯 エンドゾーン内でキャッチしたら得点！</li>
+                            <li>🛑 相手との接触は禁止！</li>
+                        </ul>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 20px; padding: clamp(20px, 5vw, 40px); text-align: center; border: 1px solid rgba(255,255,255,0.2);">
+                        <h4 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 20px; color: var(--color-accent);">こんな人におすすめ！</h4>
+                        <ul style="list-style: none; padding: 0; font-weight: 700; line-height: 2; text-align: left; display: inline-block;">
+                            <li>✨ 大学で新しいことを始めたい！</li>
+                            <li>✨ ガチ部活すぎるのは怖い…</li>
+                            <li>✨ でもちゃんとスポーツしたい！</li>
+                            <li>✨ たくさん友達がほしい！</li>
+                            <li>✨ 男女仲良いサークルがいい！</li>
+                            <li>✨ アルティメットに興味ある！</li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Activity Info -->
-        <section class="section bg-light">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title" style="font-family: var(--font-en); font-weight: 900;">ACTIVITY</h2>
-                    <p class="section-subtitle">活動内容</p>
-                </div>
-                <div style="margin-top: 50px; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px;">
-                    <div class="glass-panel-small" style="background: white;">
-                        <h4 style="font-weight: 800; color: var(--color-accent); margin-bottom: 15px;">TIME & PLACE</h4>
-                        <p style="font-size: 0.95rem; line-height: 1.7;">週2回（月・木）を中心に活動しています。<br>場所：白金キャンパス体育館、戸塚キャンパス周辺グラウンドなど</p>
-                    </div>
-                    <div class="glass-panel-small" style="background: white;">
-                        <h4 style="font-weight: 800; color: var(--color-accent); margin-bottom: 15px;">CONTENT</h4>
-                        <p style="font-size: 0.95rem; line-height: 1.7;">基礎練習、戦術確認、ミニゲームなど。初心者の方には先輩が優しくディスクの投げ方から教えます！</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Member Stats -->
+        <!-- Activities Info (Grid) -->
         <section class="section">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title" style="font-family: var(--font-en); font-weight: 900;">MEMBER</h2>
-                    <p class="section-subtitle">メンバー構成</p>
+                    <h2 class="section-title">INFO</h2>
+                    <p class="section-subtitle">活動日・費用・持ち物</p>
                 </div>
-                <div style="margin-top: 50px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                    <div class="glass-panel" style="text-align: center;">
-                        <h4 style="font-weight: 800; margin-bottom: 25px;">男女比</h4>
-                        <div style="display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin-bottom: 15px;">
-                            <div style="width: 60%; background: #3182ce; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">MEN 60%</div>
-                            <div style="width: 40%; background: #ed64a6; color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">WOMEN 40%</div>
-                        </div>
-                        <p style="font-size: 0.85rem; opacity: 0.7;">男女問わず、仲良く活動しています！</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px;">
+                    <div class="glass-panel" style="background: white; border-top: 4px solid var(--color-accent);">
+                        <h4 style="font-weight: 800; font-size: 1.1rem; color: var(--color-navy); margin-bottom: 15px;">📍 活動日・活動場所</h4>
+                        <ul style="line-height: 1.8; padding-left: 20px; color: #555; font-size: 0.95rem;">
+                            <li><strong>活動頻度:</strong> 月4回ほど (水曜日多め、土日も月1回程度)</li>
+                            <li><strong>活動時間:</strong> 2〜3時間程度</li>
+                            <li><strong>活動場所:</strong> 白金体育館、戸塚体育館、金井G(戸塚)、代々木公園 など</li>
+                        </ul>
                     </div>
-                    <div class="glass-panel" style="text-align: center;">
-                        <h4 style="font-weight: 800; margin-bottom: 25px;">初心者割合</h4>
-                        <div style="display: flex; height: 30px; border-radius: 15px; overflow: hidden; margin-bottom: 15px;">
-                            <div style="width: 90%; background: var(--color-accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">BEGINNERS 90%</div>
-                            <div style="width: 10%; background: var(--color-navy); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: bold;">EXP 10%</div>
-                        </div>
-                        <p style="font-size: 0.85rem; opacity: 0.7;">ほとんどのメンバーが大学から始めています！</p>
+                    
+                    <div class="glass-panel" style="background: white; border-top: 4px solid #3182ce;">
+                        <h4 style="font-weight: 800; font-size: 1.1rem; color: var(--color-navy); margin-bottom: 15px;">🎒 持ち物</h4>
+                        <ul style="line-height: 1.8; padding-left: 20px; color: #555; font-size: 0.95rem;">
+                            <li><strong>屋外:</strong> 着替え、飲み物</li>
+                            <li><strong>体育館:</strong> 上記 ＋ 体育館履き</li>
+                            <li>動きやすい服装で来ればOK！</li>
+                        </ul>
+                    </div>
+
+                    <div class="glass-panel" style="background: white; border-top: 4px solid #48bb78;">
+                        <h4 style="font-weight: 800; font-size: 1.1rem; color: var(--color-navy); margin-bottom: 15px;">💰 費用・兼サー</h4>
+                        <ul style="line-height: 1.8; padding-left: 20px; color: #555; font-size: 0.95rem;">
+                            <li><strong>年会費:</strong> ¥2,000 予定 (場所代・道具代などに使用)</li>
+                            <li>合宿等は別途ですが、全体的にお金はかかりません！</li>
+                            <li><strong>兼サーOK！</strong> 他スポーツや学祭委員と両立するメンバーも多数！</li>
+                        </ul>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Timeline (Annual Schedule) -->
+        <section class="section" style="background: var(--color-bg-main);">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">ANNUAL SCHEDULE</h2>
+                    <p class="section-subtitle">年間行事</p>
+                </div>
+                
+                <div class="timeline">
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-month">4月・5月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">新歓活動 / 練習会 / ご飯会 / 合同練習</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item right">
+                        <div class="timeline-content">
+                            <div class="timeline-month">6月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">新人戦</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-month">7月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">通常活動 (テスト期間のためゆるめ！)</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item right">
+                        <div class="timeline-content">
+                            <div class="timeline-month">8月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">真夏の大運動会</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-month">9月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">合宿</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item right">
+                        <div class="timeline-content">
+                            <div class="timeline-month">10月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">ハロウィンパーティー</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-month">11月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">白祭出店</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item right">
+                        <div class="timeline-content">
+                            <div class="timeline-month">12月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">忘年会</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-month">1月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">通常活動 (テスト期間のためゆるめ！)</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item right">
+                        <div class="timeline-content">
+                            <div class="timeline-month">2月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">スノボ合宿</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item left">
+                        <div class="timeline-content">
+                            <div class="timeline-month">3月</div>
+                            <p style="font-size: 0.9rem; color: #555; font-weight: 700;">追いコン</p>
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align: center; font-weight: 800; color: var(--color-navy); margin-top: 20px;">※ 通常活動は毎月継続して行っています！</p>
+            </div>
+        </section>
+        
+        <!-- Tournaments -->
+        <section class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">MATCHES</h2>
+                    <p class="section-subtitle">大会・合同活動</p>
+                </div>
+                <div style="background: white; border-radius: 20px; padding: clamp(20px, 5vw, 40px); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 10px 30px rgba(0,0,0,0.03); max-width: 800px; margin: 40px auto 0; text-align: center; word-wrap: break-word; overflow-wrap: break-word;">
+                    <p style="font-weight: 700; line-height: 1.8; color: var(--color-navy); font-size: 1.05rem;">
+                        昨年は、早稲田大学のアルティメットサークルさんと合同で、<br>企業主催の大会合宿にも参加しました！<br><br>
+                        創部3ヶ月での参加だったため優勝は逃しましたが、なんと…<br>
+                        <span style="color: var(--color-accent); font-size: clamp(1.1rem, 4vw, 1.3rem); font-weight: 900; display: block; margin-top: 15px;">FrisCo初代部長・松本がMVPを獲得しました！🏆</span>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="section" style="background: var(--color-bg-main);">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">Q&A</h2>
+                    <p class="section-subtitle">よくある質問</p>
+                </div>
+                <div style="max-width: 800px; margin: 40px auto 0;">
+                    <div class="faq-item">
+                        <div class="faq-q"><span style="color:var(--color-accent); font-size:1.3rem;">Q.</span> 運動苦手でも大丈夫？</div>
+                        <div class="faq-a"><strong style="color:var(--color-navy);">A. 大丈夫です！</strong><br>初心者ばかりなので安心してください！優しい先輩たちが丁寧に教えます！</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q"><span style="color:var(--color-accent); font-size:1.3rem;">Q.</span> 飲み会の強制はありますか？</div>
+                        <div class="faq-a"><strong style="color:var(--color-navy);">A. ありません！</strong><br>全体での飲み会もそこまで多くないので安心してください！</div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-q"><span style="color:var(--color-accent); font-size:1.3rem;">Q.</span> 途中入部できますか？</div>
+                        <div class="faq-a"><strong style="color:var(--color-navy);">A. もちろんできます！</strong><br>新歓期間後でも、学年・性別問わずいつでも大歓迎です！</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- President Message & SNS -->
+        <section class="section">
+            <div class="container" style="text-align: center;">
+                <h3 style="font-family: var(--font-en); font-weight: 900; font-size: 2rem; color: var(--color-navy); margin-bottom: 20px;">MESSAGE</h3>
+                <div style="background: white; border-radius: 20px; padding: 40px; border: 2px dashed rgba(27, 54, 93, 0.2); max-width: 600px; margin: 0 auto 50px;">
+                    <p style="font-weight: 800; font-size: 1.2rem; color: var(--color-navy);">部長から一言</p>
+                    <p style="margin-top: 15px; font-size: 1.5rem; font-weight: 900; color: var(--color-accent);">「またあとで考える」</p>
+                </div>
+
+                <h3 style="font-family: var(--font-en); font-weight: 900; font-size: 2rem; color: var(--color-navy); margin-bottom: 20px;">FOLLOW US!</h3>
+                <p style="font-weight: 700; color: #555; margin-bottom: 20px;">Instagram・各種SNSはこちら！</p>
+                <a href="#" class="btn" style="background: #E1306C; color: white; font-weight: 800; padding: 15px 40px; border-radius: 30px; font-size: 1.1rem; box-shadow: 0 4px 15px rgba(225, 48, 108, 0.3);">Instagramを見る</a>
             </div>
         </section>
     </main>
@@ -103,30 +474,24 @@
     <footer class="footer">
         <div class="container text-center">
             <div class="footer-logo">FrisCo</div>
-            <p class="copyright">&copy; 2026 FrisCo. All Rights Reserved.</p>
+            <p class="copyright">&copy; 2026 Meiji Gakuin Univ. Ultimate Circle FrisCo.</p>
         </div>
     </footer>
 
-    <!-- Modals -->
+    <!-- Auth Modal (Kept for nav auth logic) -->
     <div id="auth-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-content glass-panel shadow-lg">
+        <div class="modal-content glass-panel">
             <button class="modal-close">&times;</button>
-            <div id="auth-form-container">
-                <h3 id="auth-modal-title">LOGIN</h3>
-                <form id="auth-form">
-                    <div id="register-only-fields" style="display:none;">
-                        <input type="text" id="auth-display-name" placeholder="サークル内での名前（表示名）">
-                    </div>
-                    <input type="email" id="auth-email" placeholder="メールアドレス" required>
-                    <input type="password" id="auth-password" placeholder="パスワード" required>
-                    <button type="submit" id="auth-submit-btn" class="btn btn-primary btn-block mt-3">ログイン</button>
-                </form>
-                <p id="auth-switch-text" class="mt-3" style="font-size: 0.85rem;">アカウントをお持ちでないですか？ <a href="#" id="auth-switch-link" style="color: var(--color-accent); font-weight: bold;">新規登録</a></p>
-                <p id="auth-error-msg" style="color: #e53e3e; font-size: 0.8rem; margin-top: 10px; display: none;"></p>
-            </div>
+            <h3 id="auth-modal-title" style="text-align:center; font-weight:800; margin-bottom:20px;">LOGIN</h3>
+            <form id="auth-form">
+                <input type="email" id="auth-email" placeholder="Email" required style="width:100%; margin-bottom:10px; padding:10px;">
+                <input type="password" id="auth-password" placeholder="Password" required style="width:100%; margin-bottom:10px; padding:10px;">
+                <button type="submit" class="btn btn-primary" style="width:100%;">ENTER</button>
+            </form>
         </div>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <!-- Firebase Script Logic -->
+    <script src="script.js"></script>
 </body>
 </html>
