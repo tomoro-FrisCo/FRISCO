@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FrisCo | Official Site</title>
-    <link rel="stylesheet" href="style.css">
+    <title>FrisCo | 遊びを本気に、最高の仲間と。</title>
+    <meta name="description" content="明治学院大学アルティメットサークル「FrisCo」の公式ウェブサイト。初心者大歓迎！最高の仲間と本気で楽しむ大学生活を。">
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;800&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Firebase SDK (Classic version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
     
     <script>
+        // Firebase Config (Exact values from firebase-config.js)
         const firebaseConfig = {
             apiKey: "AIzaSyCM9hJ69HpvV_gCdapm2UmkxrumeNsJhgw",
             authDomain: "frisco-web.firebaseapp.com",
@@ -24,97 +25,213 @@
             appId: "1:1001144206780:web:ca8e0a1e5cd792ee0057b9",
             measurementId: "G-T534ZTPKYT"
         };
+        // Initialize Firebase Globally
         firebase.initializeApp(firebaseConfig);
-        window.auth = firebase.auth();
         window.db = firebase.firestore();
+        window.auth = firebase.auth();
+        console.log("Firebase initialized");
     </script>
+
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header class="header shadow-sm">
+    <!-- Navigation -->
+    <header class="header">
         <div class="header-inner">
-            <a href="#top" class="logo">FrisCo</a>
+            <a href="#top" class="logo" style="color: var(--color-navy) !important;">FrisCo</a>
+            
             <div class="header-right">
-                <div id="nav-auth-item"></div>
-                <button class="menu-toggle"><span></span><span></span><span></span></button>
+                <div id="nav-auth-item" style="display: flex; align-items: center;">
+                    <button id="nav-login-btn" class="btn" onclick="window.openAuthModal()" style="background: var(--color-navy); color: var(--color-white); padding: 8px 15px; font-size: 0.75rem; position: relative; z-index: 10005 !important; pointer-events: auto;">LOGIN</button>
+                </div>
+                
+                <button class="menu-toggle" aria-label="メニューを開く">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
+
             <nav class="nav">
                 <ul class="nav-list">
                     <li><a href="#top">HOME</a></li>
-                    <li><a href="about.html">ABOUT</a></li>
-                    <li><a href="wishlist.html?v=2">WISH LIST</a></li>
+                    <li><a href="about.html">ABOUT US</a></li>
+                    <li><a href="wishlist.html">WISH LIST</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
     <main>
-        <section class="hero">
-            <div class="hero-content">
+        <!-- ① TOP -->
+        <section id="top" class="hero" style="background-color: var(--color-bg-main);">
+            <div class="hero-content fade-in-up" style="margin-top: 0; padding-top: 60px; max-width: 100%;">
                 <h1 class="hero-title-large">FrisCo.</h1>
-                <p class="hero-subtitle-large">MEIJI GAKUIN UNIV.</p>
-                <div id="hero-action-buttons" style="margin-top:30px; display:flex; flex-wrap:wrap; justify-content:center; gap:12px; width:100%; padding: 0 10px; box-sizing: border-box;">
-                    <a href="wishlist.html?v=2" class="btn" style="background:var(--color-navy); color:white; padding:12px 20px; border-radius:30px; font-weight:800; font-size:0.85rem; flex: 1 1 auto; max-width: 200px;">WISH LIST</a>
-                    <div id="hero-login-container" style="flex: 1 1 auto; max-width: 200px;">
-                        <button id="hero-login-btn" onclick="document.getElementById('auth-modal').style.display='flex'" class="btn" style="width:100%; background:white; color:var(--color-navy); border:2px solid var(--color-navy); padding:10px 20px; border-radius:30px; font-weight:800; font-size:0.85rem;">LOGIN</button>
+                <p class="hero-subtitle-large" style="color: var(--color-navy) !important;">MEIJI GAKUIN UNIV.</p>
+                
+                <div id="hero-action-buttons" style="margin-top: 40px; display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 0 20px;">
+                    <a href="#join" class="btn" style="background: var(--color-navy); color: white; padding: 14px 30px; font-size: 0.85rem; font-weight: 800; border-radius: 5px; min-width: 140px;">JOIN US</a>
+                    <a href="wishlist.html" class="btn" style="background: var(--color-accent); color: var(--color-navy); padding: 14px 30px; font-size: 0.85rem; font-weight: 800; border-radius: 5px; min-width: 140px;">WISH LIST</a>
+                    <div id="hero-login-container">
+                        <button id="hero-login-btn" class="btn" style="background: white; color: var(--color-navy); border: 2px solid var(--color-navy); padding: 12px 30px; font-size: 0.85rem; font-weight: 800; border-radius: 5px; min-width: 140px; height: 100%;">LOGIN</button>
                     </div>
-                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSfcWjoAZef4s68yGFXlUe30EAjG5xk5aEvhuQl7LllqB9_3Og/viewform" target="_blank" rel="noopener noreferrer" class="btn" style="background:var(--color-accent); color:white; padding:12px 20px; border-radius:30px; font-weight:800; font-size:0.85rem; flex: 1 1 auto; max-width: 200px;">JOIN US</a>
                 </div>
-                <div id="hero-user-display" style="margin-top:20px; font-weight:800; font-size:1.5rem; color:var(--color-navy);"></div>
+
+                <div id="hero-user-display" style="margin-top: 30px; font-weight: 800; color: var(--color-navy); font-size: 1.8rem; min-height: 1.5em; letter-spacing: -1px;"></div>
             </div>
         </section>
 
-        <section id="schedule" class="section">
+
+
+        <!-- SCHEDULE -->
+        <section id="schedule" class="section schedule-section">
             <div class="container">
-                <h2 class="section-title">SCHEDULE</h2>
-                <!-- このクラスをCSSで制御します -->
-                <div class="calendar-main-layout">
-                    <!-- 左/上：カレンダー -->
-                    <div class="calendar-column">
-                        <div class="calendar-wrapper glass-panel" style="padding:20px; border-radius:15px;">
-                            <div class="calendar-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                                <button id="prev-month" class="cal-btn">&lt;</button>
-                                <h3 id="month-year" style="font-family:var(--font-en); font-weight:800;">2026.05</h3>
-                                <button id="next-month" class="cal-btn">&gt;</button>
+                <div class="section-header fade-in">
+                    <h2 class="section-title">SCHEDULE</h2>
+                    <p class="section-subtitle">練習・イベント予定</p>
+                </div>
+                <div class="calendar-container fade-in-up" style="max-width: 900px; margin: 0 auto;">
+                        <div class="calendar-layout" style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px;">
+                            <!-- 左側：カレンダー -->
+                            <div class="calendar-main">
+                                <div class="calendar-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                    <button id="prev-month" class="cal-btn" style="background: none; border: none; font-size: 1.2rem; color: var(--color-navy); cursor: pointer; padding: 5px;">&lt;</button>
+                                    <h3 id="month-year" class="cal-title" style="font-size: 1.5rem; font-weight: 700; color: var(--color-navy); margin: 0; font-family: var(--font-en);">2026.05</h3>
+                                    <button id="next-month" class="cal-btn" style="background: none; border: none; font-size: 1.2rem; color: var(--color-navy); cursor: pointer; padding: 5px;">&gt;</button>
+                                </div>
+                                <div class="calendar-weekdays" style="display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: bold; margin-bottom: 10px; color: var(--color-navy); font-size: 0.8rem; opacity: 0.6;">
+                                    <div style="color: #e53e3e;">S</div>
+                                    <div>M</div>
+                                    <div>T</div>
+                                    <div>W</div>
+                                    <div>T</div>
+                                    <div>F</div>
+                                    <div style="color: #3182ce;">S</div>
+                                </div>
+                                <div id="calendar-grid" class="calendar-days" style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 0;">
+                                    <!-- Days will be generated by JavaScript -->
+                                </div>
                             </div>
-                            <div class="calendar-weekdays" style="display:grid; grid-template-columns:repeat(7,1fr); text-align:center; font-size:0.7rem; color:#888; margin-bottom:10px;">
-                                <span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span>
+
+                            <!-- 右側：詳細パネル -->
+                            <div id="calendar-detail-panel" class="calendar-detail-panel" style="background: var(--color-bg-main); padding: 25px; border-radius: 15px; border: 1px solid rgba(27, 54, 93, 0.1);">
+                                <div id="detail-empty-msg" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--color-text-muted); font-size: 0.9rem; min-height: 200px;">
+                                    <span style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;">📅</span>
+                                    日付を選択して<br>詳細を表示
+                                </div>
+                                <div id="detail-content" style="display: none;">
+                                    <h4 id="detail-date" style="font-family: var(--font-en); font-size: 1.2rem; color: var(--color-navy); margin-bottom: 5px;">2026.05.13</h4>
+                                    <div id="detail-event-title" style="font-weight: 800; font-size: 1.1rem; color: var(--color-accent); margin-bottom: 15px;">練習タイトル</div>
+                                    
+                                    <div style="margin-bottom: 20px;">
+                                        <p style="font-size: 0.8rem; font-weight: bold; opacity: 0.6; margin-bottom: 5px;">ATTENDANCE</p>
+                                        <div id="detail-att-btns" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+                                            <button class="btn att-choice-btn" data-status="going" style="padding: 8px; font-size: 0.8rem; border: 1px solid #3182ce; color: #3182ce; background: transparent;">参加する</button>
+                                            <button class="btn att-choice-btn" data-status="absent" style="padding: 8px; font-size: 0.8rem; border: 1px solid #e53e3e; color: #e53e3e; background: transparent;">欠席</button>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <p style="font-size: 0.8rem; font-weight: bold; opacity: 0.6; margin-bottom: 10px;">PARTICIPANTS</p>
+                                        <ul id="detail-members-list" style="font-size: 0.85rem; padding-left: 20px;">
+                                            <!-- List will be filled -->
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
-                            <div id="calendar-grid" class="calendar-grid"></div>
                         </div>
                     </div>
-                    <!-- 右/下：詳細 & 管理 -->
-                    <div id="calendar-detail-panel" class="detail-column">
-                        <p style="text-align:center; opacity:0.5; padding:40px;">予定を読み込んでいます...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CONTACT / SNS -->
+
+        <!-- ⑦ CONTACT / SNS -->
+        <section id="contact" class="section contact-section bg-navy">
+            <div class="container text-center text-white">
+                <div class="section-header fade-in">
+                    <h2 class="section-title text-white">CONTACT</h2>
+                    <p class="section-subtitle text-white">お問い合わせ・SNS</p>
+                </div>
+
+                <p class="contact-desc fade-in">日々の活動風景はInstagramで更新中！<br>体験の申し込みや質問はDMまたは公式LINEからお気軽にどうぞ。</p>
+
+                <div class="sns-links fade-in-up">
+                    <a href="https://www.instagram.com/mgu_ultimate_frisco?igsh=ZzB6dGVoYmpxaDA1&utm_source=qr" class="sns-btn instagram" target="_blank" rel="noopener">
+                        <span class="icon">📷</span>
+                        <span>Instagramを見る</span>
+                    </a>
+                </div>
+
+                <div class="form-link-wrapper fade-in-up" style="margin-top: 50px;">
+                    <div class="glass-panel" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); max-width: 600px; margin: 0 auto; padding: 40px 20px; border-radius: 20px;">
+                        <h3 class="text-white mb-3" style="font-size: 1.5rem; font-family: var(--font-ja);">体験参加・入部申し込み</h3>
+                        <p class="text-white mb-4" style="opacity: 0.8; font-size: 0.95rem;">練習への参加を希望される方は、以下の専用フォームよりお申し込みください。<br>担当者より折り返しご連絡いたします。</p>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfcWjoAZef4s68yGFXlUe30EAjG5xk5aEvhuQl7LllqB9_3Og/viewform" target="_blank" rel="noopener noreferrer" class="btn btn-large cta-pulse" style="background: var(--color-accent); color: var(--color-navy); display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 350px; font-weight: bold; border: none; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);">
+                            <span style="font-size: 1.2rem;">📝</span> 申し込みフォームを開く
+                        </a>
                     </div>
                 </div>
             </div>
         </section>
     </main>
 
-    <div id="auth-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-content glass-panel">
-            <button class="modal-close">&times;</button>
-            <h3>LOGIN</h3>
-            <form id="auth-form">
-                <input type="email" id="auth-email" placeholder="Email" required style="width:100%; margin-bottom:10px; padding:10px; border-radius:5px; border:1px solid #ddd;">
-                <input type="password" id="auth-password" placeholder="Password" required style="width:100%; margin-bottom:10px; padding:10px; border-radius:5px; border:1px solid #ddd;">
-                <button type="submit" class="btn btn-primary" style="width:100%;">ENTER</button>
-            </form>
+    <footer class="footer">
+        <div class="container text-center">
+            <div class="footer-logo">FrisCo</div>
+            <p class="copyright">&copy; 2026 Meiji Gakuin University Ultimate Circle FrisCo. All Rights Reserved.</p>
         </div>
-    </div>
+    </footer>
 
-    <div id="attendance-modal" class="modal-overlay" style="display:none;">
-        <div class="modal-content glass-panel">
+    <script type="module" src="script.js"></script>
+
+    <!-- Firebase Auth / Database Modals -->
+    <!-- 1. Login/Register Modal -->
+    <div id="auth-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content glass-panel shadow-lg">
             <button class="modal-close">&times;</button>
-            <h3 id="att-modal-date"></h3>
-            <p id="att-modal-event" style="font-weight:800;"></p>
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:15px;">
-                <button class="btn att-choice-btn" data-status="going" style="border:1px solid #3182ce; color:#3182ce;">GOING</button>
-                <button class="btn att-choice-btn" data-status="absent" style="border:1px solid #e53e3e; color:#e53e3e;">ABSENT</button>
+            <div id="auth-form-container">
+                <h3 id="auth-modal-title">LOGIN</h3>
+                <form id="auth-form">
+                    <div id="register-only-fields" style="display:none;">
+                        <input type="text" id="auth-display-name" placeholder="サークル内での名前（表示名）">
+                    </div>
+                    <input type="email" id="auth-email" placeholder="メールアドレス" required>
+                    <input type="password" id="auth-password" placeholder="パスワード" required>
+                    <button type="submit" id="auth-submit-btn" class="btn btn-primary btn-block mt-3">ログイン</button>
+                </form>
+                <p id="auth-switch-text" class="mt-3" style="font-size: 0.85rem;">アカウントをお持ちでないですか？ <a href="#" id="auth-switch-link" style="color: var(--color-accent); font-weight: bold;">新規登録</a></p>
+                <p id="auth-error-msg" style="color: #e53e3e; font-size: 0.8rem; margin-top: 10px; display: none;"></p>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- 2. Attendance Modal -->
+    <div id="attendance-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content glass-panel shadow-lg" style="max-width: 400px;">
+            <button class="modal-close">&times;</button>
+            <h3 id="att-modal-date" style="font-family: var(--font-en); color: var(--color-navy);">2026.05.10</h3>
+            <p id="att-modal-event" style="font-weight: bold; margin-bottom: 20px;">通常練習</p>
+            
+            <div id="att-status-section">
+                <p style="font-size: 0.9rem; margin-bottom: 15px;">あなたの出欠を選択してください：</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                    <button class="btn att-choice-btn" data-status="going" style="border: 2px solid #3182ce; color: #3182ce; background: transparent;">参加する</button>
+                    <button class="btn att-choice-btn" data-status="absent" style="border: 2px solid #e53e3e; color: #e53e3e; background: transparent;">欠席</button>
+                </div>
+                <button id="att-remove-btn" class="btn btn-block mt-3" style="font-size: 0.8rem; text-decoration: underline; color: #667; display: none;">出欠を取り消す</button>
+            </div>
+
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid rgba(0,0,0,0.1);">
+            
+            <div id="att-list-section">
+                <p style="font-size: 0.85rem; font-weight: bold; margin-bottom: 10px;">参加予定メンバー：</p>
+                <ul id="att-members-list" style="font-size: 0.9rem; text-align: left; padding-left: 20px; list-style: disc;">
+                    <!-- Members will be listed here -->
+                </ul>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
