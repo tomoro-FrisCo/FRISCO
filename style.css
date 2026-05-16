@@ -52,8 +52,6 @@ body {
     background-color: var(--color-bg-main);
     line-height: 1.6;
     overflow-x: hidden;
-    width: 100%;
-    word-break: auto-phrase; /* Modern Japanese wrapping */
     overflow-wrap: break-word;
 }
 
@@ -1219,13 +1217,15 @@ ul, ol {
 
 .calendar-grid {
     display: grid;
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(7, minmax(0, 1fr));
     gap: 8px;
     margin-top: 10px;
 }
 
 .cal-day {
-    aspect-ratio: 1;
+    aspect-ratio: 1 / 1;
+    width: 100%;
+    min-height: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
