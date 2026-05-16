@@ -357,31 +357,36 @@ ul, ol {
 }
 
 .hero-title-large {
-    font-size: clamp(6rem, 20vw, 15rem);
+    font-size: clamp(4rem, 15vw, 15rem);
     font-weight: 900;
     line-height: 0.8;
     letter-spacing: -0.05em;
     margin-bottom: 20px;
     font-family: var(--font-en);
     color: var(--color-navy);
+    word-wrap: break-word;
+    word-break: break-word;
 }
 
 .hero-subtitle-large {
     font-family: var(--font-en);
-    font-size: 1.2rem;
-    letter-spacing: 0.5em;
+    font-size: clamp(0.9rem, 3vw, 1.2rem);
+    letter-spacing: 0.4em;
     font-weight: 300;
     opacity: 0.7;
     color: var(--color-navy);
+    margin-left: 0.2em; /* offset for letter-spacing to perfectly center */
 }
 
 @media (max-width: 768px) {
     .hero-title-large {
-        font-size: clamp(3rem, 15vw, 6rem);
+        font-size: clamp(3rem, 12vw, 5rem);
+        padding: 0 10px;
     }
     .hero-subtitle-large {
         font-size: 0.8rem;
-        letter-spacing: 0.3em;
+        letter-spacing: 0.25em;
+        margin-left: 0.125em;
     }
 }
 

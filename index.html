@@ -52,11 +52,12 @@
             <div class="hero-content">
                 <h1 class="hero-title-large">FrisCo.</h1>
                 <p class="hero-subtitle-large">MEIJI GAKUIN UNIV.</p>
-                <div id="hero-action-buttons" style="margin-top:30px; display:flex; justify-content:center; gap:10px;">
-                    <a href="wishlist.html" class="btn" style="background:var(--color-accent); color:var(--color-navy); padding:12px 25px; border-radius:5px; font-weight:800;">WISH LIST</a>
-                    <div id="hero-login-container">
-                        <button id="hero-login-btn" class="btn" style="background:white; color:var(--color-navy); border:1.5px solid var(--color-navy); padding:12px 25px; border-radius:5px; font-weight:800;">LOGIN</button>
+                <div id="hero-action-buttons" style="margin-top:30px; display:flex; flex-wrap:wrap; justify-content:center; gap:12px; width:100%; padding: 0 10px; box-sizing: border-box;">
+                    <a href="wishlist.html" class="btn" style="background:var(--color-navy); color:white; padding:12px 20px; border-radius:30px; font-weight:800; font-size:0.85rem; flex: 1 1 auto; max-width: 200px;">WISH LIST</a>
+                    <div id="hero-login-container" style="flex: 1 1 auto; max-width: 200px;">
+                        <button id="hero-login-btn" onclick="document.getElementById('auth-modal').style.display='flex'" class="btn" style="width:100%; background:white; color:var(--color-navy); border:2px solid var(--color-navy); padding:10px 20px; border-radius:30px; font-weight:800; font-size:0.85rem;">LOGIN</button>
                     </div>
+                    <a href="about.html" class="btn" style="background:var(--color-accent); color:white; padding:12px 20px; border-radius:30px; font-weight:800; font-size:0.85rem; flex: 1 1 auto; max-width: 200px;">JOIN US</a>
                 </div>
                 <div id="hero-user-display" style="margin-top:20px; font-weight:800; font-size:1.5rem; color:var(--color-navy);"></div>
             </div>

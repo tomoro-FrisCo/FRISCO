@@ -61,7 +61,8 @@ function startApp() {
         }
         const hD = document.getElementById('hero-user-display');
         if (hD) hD.innerHTML = user ? `🌟 ${name}さん、こんにちは！` : '';
-        document.getElementById('hero-login-container').style.display = user ? 'none' : 'block';
+        const hC = document.getElementById('hero-login-container');
+        if (hC) hC.style.display = user ? 'none' : 'block';
         
         draw();
     });
